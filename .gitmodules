@@ -1,0 +1,3 @@
+[submodule "libsystemctlm-soc"]
+	path = libsystemctlm-soc
+	url = ../libsystemctlm-soc.git

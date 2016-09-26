@@ -1,0 +1,74 @@
+TLM-COSIM-DEMO
+---------------------------------------
+This contains a small SystemC/TLM-2.0 based subsystem for demo purposes.
+It has an interconnect connecting a remote-port attached QEMU
+instance, a demo/debug-device, a small DMA and if verilator is available
+a timer. Note that the remote-port instance connecting to QEMU
+can serve multiple QEMU instances. In fact, this demo can run
+connected to the ZynqMP platform with 2 external QEMU instances
+(APU/RPU and PMU). All of these intances can access the
+TLM world.
+
+The demo/debug-device is used to read out System-C time, output
+debug trace/events and to end the simulation.
+
+The DMA is used to demonstrate the bus mastering capabilities of the
+TLM world back into QEMU via remote-port.
+
+The timer is a minimalistic APB connected timer written in
+verilog. If verilator is available, this timer can be hooked
+into the simulation.
+For TLM to be able to talk to the APB timer, a TLM-2-APB bridge
+was written in System-C.
+
+BUILD
+---------------------------------------
+Before buidling you will need to ensure that you have SystemC and SCML
+avaliable.
+
+The demo was prepared assuming the following versions:
+    SystemC: 2.3.1
+
+The Makefile assumes that both are installed in the direcotries below:
+    SystemC: /usr/local/systemc-2.3.1/
+
+If you have them installed in different directories point the Makefile to the
+correct directory by setting the variables SYSTEMC.
+
+You will also need to clone the libremote-port submode, by running:
+    $ git submodule update --init libsystemctlm-soc
+
+Once everything is installed you can just run make. If SystemC is in
+a different directory then mentioned about you will need to specify the
+directory by setting the variables mentioned above.
+
+You can also configure the build by creating a .config.mk file.
+There are other options that can be set, e.g:
+    HAVE_VERILOG=n
+    HAVE_VERILOG_VERILATOR=n
+    HAVE_VERILOG_VCS=n
+
+RUN
+---------------------------------------
+When running you will need to make sure the program can link to your
+SystemC/TLM libraries. You will also need to give arguments to the application.
+The first argument points to the QEMU machine-path to use. The second argument
+is the icount value to use. The arguments should line up with the QEMU command
+line arguments.
+
+A ZynqMP example:
+In one terminal, in the demo directory
+LD_LIBRARY_PATH=/usr/local/systemc-2.3.1/lib-linux64/ ./zynqmp_demo \
+    unix:./qemu-tmp/qemu-rport-_amba@0_cosim@0 10000
+
+A Zynq-7000 example:
+LD_LIBRARY_PATH=/usr/local/systemc-2.3.1/lib-linux64/ ./zynq_demo \
+    unix:./qemu-tmp/qemu-rport-_cosim@0 1000000
+
+In another terminal you will need to start up the PS. In this case we are going
+to start up a PetaLinux QEMU session and use the Linux kernel to probe the
+SystemC side. You could also start up your own kernel with the required drivers
+or a baremetal application.
+
+See here for instructions on how to start the PetaLinux QEMU session:
+http://www.wiki.xilinx.com/QEMU+SystemC+and+TLM+CoSimulation
