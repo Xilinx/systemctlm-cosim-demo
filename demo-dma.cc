@@ -60,6 +60,11 @@ void demodma::do_dma_trans(tlm::tlm_command cmd, unsigned char *buf,
 	tr.set_dmi_allowed(false);
 	tr.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
 
+	if (regs.byte_en) {
+		tr.set_byte_enable_ptr((unsigned char *) &regs.byte_en);
+		tr.set_byte_enable_length(sizeof regs.byte_en);
+	}
+
 	init_socket->b_transport(tr, delay);
 	if (tr.get_response_status() != tlm::TLM_OK_RESPONSE) {
 		printf("%s:%d DMA transaction error!\n", __func__, __LINE__);
