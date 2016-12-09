@@ -115,6 +115,7 @@ void demodma::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 	}
 
 	addr >>= 2;
+	addr &= 7;
 	if (trans.get_command() == tlm::TLM_READ_COMMAND) {
 		memcpy(data, &regs.u32[addr], len);
 	} else if (cmd == tlm::TLM_WRITE_COMMAND) {
