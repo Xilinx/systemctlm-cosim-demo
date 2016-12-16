@@ -82,6 +82,8 @@ SC_OBJS += debugdev.o
 SC_OBJS += demo-dma.o
 
 LIBSOC_PATH=libsystemctlm-soc
+CPPFLAGS += -I $(LIBSOC_PATH)
+
 LIBSOC_ZYNQ_PATH=$(LIBSOC_PATH)/zynq
 SC_OBJS += $(LIBSOC_ZYNQ_PATH)/xilinx-zynq.o
 CPPFLAGS += -I $(LIBSOC_ZYNQ_PATH)
