@@ -41,6 +41,7 @@ using namespace std;
 
 #include "trace.h"
 #include "iconnect.h"
+#include "memory.h"
 #include "debugdev.h"
 #include "demo-dma.h"
 #include "xilinx-zynqmp.h"
@@ -56,12 +57,13 @@ using namespace std;
 #endif
 
 #define NR_MASTERS	2
-#define NR_DEVICES	4
+#define NR_DEVICES	5
 
 SC_MODULE(Top)
 {
 	iconnect<NR_MASTERS, NR_DEVICES>	*bus;
 	xilinx_zynqmp zynq;
+	memory mem;
 	debugdev *debug;
 	demodma *dma;
 
@@ -89,6 +91,7 @@ SC_MODULE(Top)
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
 		zynq("zynq", sk_descr),
+		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		rst("rst"),
 #ifdef HAVE_VERILOG
 		irq_tmr("irq_tmr"),
@@ -117,6 +120,8 @@ SC_MODULE(Top)
 		tlm2apb_tmr = new tlm2apb_bridge<bool, sc_bv, 16, sc_bv, 32> ("tlm2apb-tmr-bridge");
 		bus->memmap(0xa0020000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2apb_tmr->tgt_socket);
+		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
+				ADDRMODE_RELATIVE, -1, mem.socket);
 
 		bus->memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
