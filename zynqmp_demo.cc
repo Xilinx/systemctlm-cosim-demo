@@ -56,8 +56,9 @@ using namespace std;
 #include "verilated.h"
 #endif
 
-#define NR_MASTERS	2
-#define NR_DEVICES	5
+#define NR_DEMODMA      4
+#define NR_MASTERS	1 + NR_DEMODMA
+#define NR_DEVICES	4 + NR_DEMODMA
 
 SC_MODULE(Top)
 {
@@ -65,7 +66,7 @@ SC_MODULE(Top)
 	xilinx_zynqmp zynq;
 	memory mem;
 	debugdev *debug;
-	demodma *dma;
+	demodma *dma[NR_DEMODMA];
 
 	sc_signal<bool> rst;
 
@@ -104,18 +105,29 @@ SC_MODULE(Top)
 		apbsig_timer_pwdata("apbtimer_pwdata"),
 		apbsig_timer_prdata("apbtimer_prdata")
 	{
+		unsigned int i;
+
 		m_qk.set_global_quantum(quantum);
 
 		zynq.rst(rst);
 
 		bus   = new iconnect<NR_MASTERS, NR_DEVICES> ("bus");
 		debug = new debugdev("debug");
-		dma = new demodma("demodma");
+
+		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
+			char name[16];
+
+			snprintf(name, sizeof name, "demodma%d", i);
+			dma[i] = new demodma(name);
+		}
 
 		bus->memmap(0xa0000000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, debug->socket);
-		bus->memmap(0xa0010000ULL, 0x10 - 1,
-				ADDRMODE_RELATIVE, -1, dma->tgt_socket);
+
+		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
+			bus->memmap(0xa0010000ULL + 0x100 * i, 0x10 - 1,
+				ADDRMODE_RELATIVE, -1, dma[i]->tgt_socket);
+		}
 
 		tlm2apb_tmr = new tlm2apb_bridge<bool, sc_bv, 16, sc_bv, 32> ("tlm2apb-tmr-bridge");
 		bus->memmap(0xa0020000ULL, 0x10 - 1,
@@ -128,10 +140,12 @@ SC_MODULE(Top)
 
 		zynq.s_axi_hpm_fpd[0]->bind(*(bus->t_sk[0]));
 
-		dma->init_socket.bind(*(bus->t_sk[1]));
+		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
+			dma[i]->init_socket.bind(*(bus->t_sk[1 + i]));
+			dma[i]->irq(zynq.pl2ps_irq[1 + i]);
+		}
 
 		debug->irq(zynq.pl2ps_irq[0]);
-		dma->irq(zynq.pl2ps_irq[1]);
 
 #ifdef HAVE_VERILOG
 		/* Slow clock to keep simulation fast.  */
