@@ -46,31 +46,45 @@ using namespace std;
 #include "demo-dma.h"
 #include "xilinx-zynqmp.h"
 
-#include "tlm2apb-bridge.h"
+#include "tlm-bridges/tlm2axilite-bridge.h"
+#include "tlm-bridges/tlm2axi-bridge.h"
+#include "tlm-bridges/tlm2apb-bridge.h"
 #ifdef HAVE_VERILOG_VCS
 #include "apb_slave_timer.h"
 #endif
 
 #ifdef HAVE_VERILOG_VERILATOR
 #include "Vapb_timer.h"
+#include "Vaxilite_dev_v1_0.h"
+#include "Vaxifull_dev_v1_0.h"
 #include "verilated.h"
 #endif
 
 #define NR_DEMODMA      4
 #define NR_MASTERS	1 + NR_DEMODMA
-#define NR_DEVICES	4 + NR_DEMODMA
+#define NR_DEVICES	6 + NR_DEMODMA
 
 SC_MODULE(Top)
 {
+	SC_HAS_PROCESS(Top);
 	iconnect<NR_MASTERS, NR_DEVICES>	*bus;
 	xilinx_zynqmp zynq;
 	memory mem;
 	debugdev *debug;
 	demodma *dma[NR_DEMODMA];
 
-	sc_signal<bool> rst;
+	sc_signal<bool> rst, rst_n;
 
 	sc_clock *clk;
+#define AXIFULL_DATA_WIDTH 128
+#define AXIFULL_ID_WIDTH 8
+#ifdef HAVE_VERILOG
+	tlm2axilite_bridge<4, 32> *tlm2axi_al;
+	tlm2axi_bridge<10, AXIFULL_DATA_WIDTH> *tlm2axi_af;
+#else
+	memory mem_al;
+	memory mem_af;
+#endif
 	tlm2apb_bridge<bool, sc_bv, 16, sc_bv, 32> *tlm2apb_tmr;
 #ifdef HAVE_VERILOG
 #ifdef HAVE_VERILOG_VCS
@@ -78,6 +92,8 @@ SC_MODULE(Top)
 #endif
 #ifdef HAVE_VERILOG_VERILATOR
 	Vapb_timer *apb_timer;
+	Vaxilite_dev_v1_0 *al;
+	Vaxifull_dev_v1_0 *af;
 #endif
 	sc_signal<bool> irq_tmr;
 #endif
@@ -89,13 +105,95 @@ SC_MODULE(Top)
 	sc_signal<sc_bv<32> > apbsig_timer_pwdata;
 	sc_signal<sc_bv<32> > apbsig_timer_prdata;
 
+	sc_signal<bool> al_awvalid;
+	sc_signal<bool> al_awready;
+	sc_signal<sc_bv<4> > al_awaddr;
+	sc_signal<sc_bv<3> > al_awprot;
+
+	sc_signal<bool> al_wvalid;
+	sc_signal<bool> al_wready;
+	sc_signal<sc_bv<32> > al_wdata;
+	sc_signal<sc_bv<4> > al_wstrb;
+
+	sc_signal<bool> al_bvalid;
+	sc_signal<bool> al_bready;
+	sc_signal<sc_bv<2> > al_bresp;
+
+	sc_signal<bool> al_arvalid;
+	sc_signal<bool> al_arready;
+	sc_signal<sc_bv<4> > al_araddr;
+	sc_signal<sc_bv<3> > al_arprot;
+
+	sc_signal<bool> al_rvalid;
+	sc_signal<bool> al_rready;
+	sc_signal<sc_bv<32> > al_rdata;
+	sc_signal<sc_bv<2> > al_rresp;
+
+	sc_signal<bool> af_awvalid;
+	sc_signal<bool> af_awready;
+	sc_signal<sc_bv<10> > af_awaddr;
+	sc_signal<sc_bv<3> > af_awprot;
+	sc_signal<sc_bv<2> > af_awuser;
+	sc_signal<sc_bv<4> > af_awregion;
+	sc_signal<sc_bv<4> > af_awqos;
+	sc_signal<sc_bv<4> > af_awcache;
+	sc_signal<sc_bv<2> > af_awburst;
+	sc_signal<sc_bv<3> > af_awsize;
+	sc_signal<sc_bv<8> > af_awlen;
+	sc_signal<sc_bv<AXIFULL_ID_WIDTH> > af_awid;
+	sc_signal<bool > af_awlock;
+
+	sc_signal<bool> af_wvalid;
+	sc_signal<bool> af_wready;
+	sc_signal<sc_bv<AXIFULL_DATA_WIDTH> > af_wdata;
+	sc_signal<sc_bv<AXIFULL_DATA_WIDTH/8> > af_wstrb;
+	sc_signal<sc_bv<2> > af_wuser;
+	sc_signal<bool> af_wlast;
+
+	sc_signal<bool> af_bvalid;
+	sc_signal<bool> af_bready;
+	sc_signal<sc_bv<2> > af_bresp;
+	sc_signal<sc_bv<2> > af_buser;
+	sc_signal<sc_bv<AXIFULL_ID_WIDTH> > af_bid;
+
+	sc_signal<bool> af_arvalid;
+	sc_signal<bool> af_arready;
+	sc_signal<sc_bv<10> > af_araddr;
+	sc_signal<sc_bv<3> > af_arprot;
+	sc_signal<sc_bv<2> > af_aruser;
+	sc_signal<sc_bv<4> > af_arregion;
+	sc_signal<sc_bv<4> > af_arqos;
+	sc_signal<sc_bv<4> > af_arcache;
+	sc_signal<sc_bv<2> > af_arburst;
+	sc_signal<sc_bv<3> > af_arsize;
+	sc_signal<sc_bv<8> > af_arlen;
+	sc_signal<sc_bv<AXIFULL_ID_WIDTH> > af_arid;
+	sc_signal<bool > af_arlock;
+
+	sc_signal<bool> af_rvalid;
+	sc_signal<bool> af_rready;
+	sc_signal<sc_bv<AXIFULL_DATA_WIDTH> > af_rdata;
+	sc_signal<sc_bv<2> > af_rresp;
+	sc_signal<sc_bv<2> > af_ruser;
+	sc_signal<sc_bv<AXIFULL_ID_WIDTH> > af_rid;
+	sc_signal<bool> af_rlast;
+
+	void gen_rst_n(void)
+	{
+		rst_n.write(!rst.read());
+	}
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		rst("rst"),
+		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
 		irq_tmr("irq_tmr"),
+#else
+		mem_al("mem_al", sc_time(1, SC_NS), 4 * 4),
+		// 128bits x 512 slots.
+		mem_af("mem_af", sc_time(1, SC_NS), 16 * 512),
 #endif
 		apbsig_timer_psel("apbtimer_psel"),
 		apbsig_timer_penable("apbtimer_penable"),
@@ -103,9 +201,87 @@ SC_MODULE(Top)
 		apbsig_timer_pready("apbtimer_pready"),
 		apbsig_timer_paddr("apbtimer_paddr"),
 		apbsig_timer_pwdata("apbtimer_pwdata"),
-		apbsig_timer_prdata("apbtimer_prdata")
+		apbsig_timer_prdata("apbtimer_prdata"),
+
+		al_awvalid("al_awvalid"),
+		al_awready("al_awready"),
+		al_awaddr("al_awaddr"),
+		al_awprot("al_awprot"),
+
+		al_wvalid("al_wvalid"),
+		al_wready("al_wready"),
+		al_wdata("al_wdata"),
+		al_wstrb("al_wstrb"),
+
+		al_bvalid("al_bvalid"),
+		al_bready("al_bready"),
+		al_bresp("al_bresp"),
+
+		al_arvalid("al_arvalid"),
+		al_arready("al_arready"),
+		al_araddr("al_araddr"),
+		al_arprot("al_arprot"),
+
+		al_rvalid("al_rvalid"),
+		al_rready("al_rready"),
+		al_rdata("al_rdata"),
+		al_rresp("al_rresp"),
+
+
+		af_awvalid("af_awvalid"),
+		af_awready("af_awready"),
+		af_awaddr("af_awaddr"),
+		af_awprot("af_awprot"),
+		af_awuser("af_awuser"),
+		af_awregion("af_awregion"),
+		af_awqos("af_awqos"),
+		af_awcache("af_awcache"),
+		af_awburst("af_awburst"),
+		af_awsize("af_awsize"),
+		af_awlen("af_awlen"),
+		af_awid("af_awid"),
+		af_awlock("af_awlock"),
+
+		af_wvalid("af_wvalid"),
+		af_wready("af_wready"),
+		af_wdata("af_wdata"),
+		af_wstrb("af_wstrb"),
+		af_wuser("af_wuser"),
+		af_wlast("af_wlast"),
+
+		af_bvalid("af_bvalid"),
+		af_bready("af_bready"),
+		af_bresp("af_bresp"),
+		af_buser("af_buser"),
+		af_bid("af_bid"),
+
+		af_arvalid("af_arvalid"),
+		af_arready("af_arready"),
+		af_araddr("af_araddr"),
+		af_arprot("af_arprot"),
+		af_aruser("af_aruser"),
+		af_arregion("af_arregion"),
+		af_arqos("af_arqos"),
+		af_arcache("af_arcache"),
+		af_arburst("af_arburst"),
+		af_arsize("af_arsize"),
+		af_arlen("af_arlen"),
+		af_arid("af_arid"),
+		af_arlock("af_arlock"),
+
+		af_rvalid("af_rvalid"),
+		af_rready("af_rready"),
+		af_rdata("af_rdata"),
+		af_rresp("af_rresp"),
+		af_ruser("af_ruser"),
+		af_rid("af_rid"),
+		af_rlast("af_rlast")
+
 	{
 		unsigned int i;
+
+		SC_METHOD(gen_rst_n);
+		sensitive << rst;
 
 		m_qk.set_global_quantum(quantum);
 
@@ -132,6 +308,20 @@ SC_MODULE(Top)
 		tlm2apb_tmr = new tlm2apb_bridge<bool, sc_bv, 16, sc_bv, 32> ("tlm2apb-tmr-bridge");
 		bus->memmap(0xa0020000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2apb_tmr->tgt_socket);
+
+#ifdef HAVE_VERILOG
+		tlm2axi_al = new tlm2axilite_bridge<4, 32> ("tlm2axi-al-bridge");
+		tlm2axi_af = new tlm2axi_bridge<10, AXIFULL_DATA_WIDTH> ("tlm2axi-af-bridge");
+		bus->memmap(0xa0450000ULL, 0x10 - 1,
+				ADDRMODE_RELATIVE, -1, tlm2axi_al->tgt_socket);
+		bus->memmap(0xa0460000ULL, 0x400 - 1,
+				ADDRMODE_RELATIVE, -1, tlm2axi_af->tgt_socket);
+#else
+		bus->memmap(0xa0450000ULL, 0x10 - 1,
+				ADDRMODE_RELATIVE, -1, mem_al.socket);
+		bus->memmap(0xa0460000ULL, 0x400 - 1,
+				ADDRMODE_RELATIVE, -1, mem_af.socket);
+#endif
 		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
@@ -154,6 +344,8 @@ SC_MODULE(Top)
 		apb_timer = new apb_slave_timer("apb_timer");
 #elif defined(HAVE_VERILOG_VERILATOR)
 		apb_timer = new Vapb_timer("apb_timer");
+		al = new Vaxilite_dev_v1_0("axilite-dev");
+		af = new Vaxifull_dev_v1_0("axifull-dev");
 #endif
                 apb_timer->clk(*clk);
                 apb_timer->rst(rst);
@@ -167,6 +359,167 @@ SC_MODULE(Top)
                 apb_timer->pready(apbsig_timer_pready);
 
                 tlm2apb_tmr->clk(*clk);
+
+
+		al->s00_axi_aclk(*clk);
+		al->s00_axi_aresetn(rst_n);
+
+		al->s00_axi_awvalid(al_awvalid);
+		al->s00_axi_awready(al_awready);
+		al->s00_axi_awaddr(al_awaddr);
+		al->s00_axi_awprot(al_awprot);
+
+		al->s00_axi_wvalid(al_wvalid);
+		al->s00_axi_wready(al_wready);
+		al->s00_axi_wdata(al_wdata);
+		al->s00_axi_wstrb(al_wstrb);
+
+		al->s00_axi_bvalid(al_bvalid);
+		al->s00_axi_bready(al_bready);
+		al->s00_axi_bresp(al_bresp);
+
+		al->s00_axi_arvalid(al_arvalid);
+		al->s00_axi_arready(al_arready);
+		al->s00_axi_araddr(al_araddr);
+		al->s00_axi_arprot(al_arprot);
+
+		al->s00_axi_rvalid(al_rvalid);
+		al->s00_axi_rready(al_rready);
+		al->s00_axi_rdata(al_rdata);
+		al->s00_axi_rresp(al_rresp);
+
+		af->s00_axi_aclk(*clk);
+		af->s00_axi_aresetn(rst_n);
+
+		af->s00_axi_awvalid(af_awvalid);
+		af->s00_axi_awready(af_awready);
+		af->s00_axi_awaddr(af_awaddr);
+		af->s00_axi_awprot(af_awprot);
+		af->s00_axi_awuser(af_awuser);
+		af->s00_axi_awregion(af_awregion);
+		af->s00_axi_awqos(af_awqos);
+		af->s00_axi_awcache(af_awcache);
+		af->s00_axi_awburst(af_awburst);
+		af->s00_axi_awsize(af_awsize);
+		af->s00_axi_awlen(af_awlen);
+		af->s00_axi_awid(af_awid);
+		af->s00_axi_awlock(af_awlock);
+
+		af->s00_axi_wvalid(af_wvalid);
+		af->s00_axi_wready(af_wready);
+		af->s00_axi_wdata(af_wdata);
+		af->s00_axi_wstrb(af_wstrb);
+		af->s00_axi_wuser(af_wuser);
+		af->s00_axi_wlast(af_wlast);
+
+		af->s00_axi_bvalid(af_bvalid);
+		af->s00_axi_bready(af_bready);
+		af->s00_axi_bresp(af_bresp);
+		af->s00_axi_buser(af_buser);
+		af->s00_axi_bid(af_bid);
+
+		af->s00_axi_arvalid(af_arvalid);
+		af->s00_axi_arready(af_arready);
+		af->s00_axi_araddr(af_araddr);
+		af->s00_axi_arprot(af_arprot);
+		af->s00_axi_aruser(af_aruser);
+		af->s00_axi_arregion(af_arregion);
+		af->s00_axi_arqos(af_arqos);
+		af->s00_axi_arcache(af_arcache);
+		af->s00_axi_arburst(af_arburst);
+		af->s00_axi_arsize(af_arsize);
+		af->s00_axi_arlen(af_arlen);
+		af->s00_axi_arid(af_arid);
+		af->s00_axi_arlock(af_arlock);
+
+		af->s00_axi_rvalid(af_rvalid);
+		af->s00_axi_rready(af_rready);
+		af->s00_axi_rdata(af_rdata);
+		af->s00_axi_rresp(af_rresp);
+		af->s00_axi_ruser(af_ruser);
+		af->s00_axi_rid(af_rid);
+		af->s00_axi_rlast(af_rlast);
+
+		tlm2axi_al->clk(*clk);
+		tlm2axi_af->clk(*clk);
+
+		tlm2axi_al->resetn(rst_n);
+		tlm2axi_af->resetn(rst_n);
+
+		tlm2axi_al->awvalid(al_awvalid);
+		tlm2axi_al->awready(al_awready);
+		tlm2axi_al->awaddr(al_awaddr);
+		tlm2axi_al->awprot(al_awprot);
+
+		tlm2axi_al->wvalid(al_wvalid);
+		tlm2axi_al->wready(al_wready);
+		tlm2axi_al->wdata(al_wdata);
+		tlm2axi_al->wstrb(al_wstrb);
+
+		tlm2axi_al->bvalid(al_bvalid);
+		tlm2axi_al->bready(al_bready);
+		tlm2axi_al->bresp(al_bresp);
+
+		tlm2axi_al->arvalid(al_arvalid);
+		tlm2axi_al->arready(al_arready);
+		tlm2axi_al->araddr(al_araddr);
+		tlm2axi_al->arprot(al_arprot);
+
+		tlm2axi_al->rvalid(al_rvalid);
+		tlm2axi_al->rready(al_rready);
+		tlm2axi_al->rdata(al_rdata);
+		tlm2axi_al->rresp(al_rresp);
+
+		/* AXI FULL.  */
+		tlm2axi_af->awvalid(af_awvalid);
+		tlm2axi_af->awready(af_awready);
+		tlm2axi_af->awaddr(af_awaddr);
+		tlm2axi_af->awprot(af_awprot);
+		tlm2axi_af->awuser(af_awuser);
+		tlm2axi_af->awregion(af_awregion);
+		tlm2axi_af->awqos(af_awqos);
+		tlm2axi_af->awcache(af_awcache);
+		tlm2axi_af->awburst(af_awburst);
+		tlm2axi_af->awsize(af_awsize);
+		tlm2axi_af->awlen(af_awlen);
+		tlm2axi_af->awid(af_awid);
+		tlm2axi_af->awlock(af_awlock);
+
+		tlm2axi_af->wvalid(af_wvalid);
+		tlm2axi_af->wready(af_wready);
+		tlm2axi_af->wdata(af_wdata);
+		tlm2axi_af->wstrb(af_wstrb);
+		tlm2axi_af->wuser(af_wuser);
+		tlm2axi_af->wlast(af_wlast);
+
+		tlm2axi_af->bvalid(af_bvalid);
+		tlm2axi_af->bready(af_bready);
+		tlm2axi_af->bresp(af_bresp);
+		tlm2axi_af->bid(af_bid);
+		tlm2axi_af->buser(af_buser);
+
+		tlm2axi_af->arvalid(af_arvalid);
+		tlm2axi_af->arready(af_arready);
+		tlm2axi_af->araddr(af_araddr);
+		tlm2axi_af->arprot(af_arprot);
+		tlm2axi_af->aruser(af_aruser);
+		tlm2axi_af->arregion(af_arregion);
+		tlm2axi_af->arqos(af_arqos);
+		tlm2axi_af->arcache(af_arcache);
+		tlm2axi_af->arburst(af_arburst);
+		tlm2axi_af->arsize(af_arsize);
+		tlm2axi_af->arlen(af_arlen);
+		tlm2axi_af->arid(af_arid);
+		tlm2axi_af->arlock(af_arlock);
+
+		tlm2axi_af->rvalid(af_rvalid);
+		tlm2axi_af->rready(af_rready);
+		tlm2axi_af->rdata(af_rdata);
+		tlm2axi_af->rresp(af_rresp);
+		tlm2axi_af->ruser(af_ruser);
+		tlm2axi_af->rid(af_rid);
+		tlm2axi_af->rlast(af_rlast);
+
 #else
 		clk = new sc_clock("clk", sc_time(20, SC_US));
                 apbsig_timer_prdata = 0xeddebeef;

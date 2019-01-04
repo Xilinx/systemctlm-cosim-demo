@@ -53,8 +53,22 @@ void trace(sc_trace_file* tf, const sc_module& mod, const char *txt)
 
 		/* Add more types as needed.  */
 		sc_trace_template < sc_core::sc_signal < bool > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<2> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<3> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<4> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<5> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<6> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<7> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<8> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<9> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<10> > > (tf,obj);
 		sc_trace_template < sc_core::sc_signal < sc_bv<16> > > (tf,obj);
 		sc_trace_template < sc_core::sc_signal < sc_bv<32> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<64> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<128> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<256> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<384> > > (tf,obj);
+		sc_trace_template < sc_core::sc_signal < sc_bv<512> > > (tf,obj);
 
 		if ((m = dynamic_cast < sc_module* > (obj)))
 			trace(tf, *m, m->name());

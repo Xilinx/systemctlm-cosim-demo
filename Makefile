@@ -112,14 +112,14 @@ VERILATOR=verilator
 
 VM_TRACE?=0
 VM_COVERAGE?=0
-VFILES_CPP=$(addprefix $(VOBJ_DIR)/V, $(VFILES:.v=.cpp))
-VFILES_OBJS=$(VFILES_CPP:.cpp=.o)
-VTOP_LIB=$(VOBJ_DIR)/Vapb_timer__ALL.a
+V_LDLIBS += $(VOBJ_DIR)/Vapb_timer__ALL.a
+V_LDLIBS += $(VOBJ_DIR)/Vaxilite_dev_v1_0__ALL.a
+V_LDLIBS += $(VOBJ_DIR)/Vaxifull_dev_v1_0__ALL.a
+LDLIBS += $(V_LDLIBS)
 VERILATED_O=$(VOBJ_DIR)/verilated.o
-VTOP_MK=Vapb_timer.mk
 
 # Gives some compatibility with vcs
-VFLAGS += --pins-bv 2
+VFLAGS += --pins-bv 2 -Wno-fatal
 
 VFLAGS+=--sc --Mdir $(VOBJ_DIR)
 VFLAGS += -CFLAGS "-DHAVE_VERILOG" -CFLAGS "-DHAVE_VERILOG_VERILATOR"
@@ -172,20 +172,22 @@ CXXFLAGS += -MMD
 
 ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
 include $(VERILATOR_ROOT)/include/verilated.mk
-endif
 
-obj_dir/V%.cpp: %.v
-	$(VENV) $(VERILATOR) $(VFLAGS) $(VFILES)
+$(ZYNQMP_TOP_O): $(V_LDLIBS)
+$(VERILATED_O): $(V_LDLIBS)
 
-$(VTOP_LIB): $(VFILES_CPP)
-	$(MAKE) -C $(VOBJ_DIR) -f $(VTOP_MK)
+$(VOBJ_DIR)/V%__ALL.a: %.v
+	$(VENV) $(VERILATOR) $(VFLAGS) $<
+	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk)
+	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk) verilated.o
 
-$(VERILATED_O): $(VFILES_CPP)
-	$(MAKE) -C $(VOBJ_DIR) -f $(VTOP_MK) verilated.o
+$(VOBJ_DIR)/Vaxilite_dev_v1_0__ALL.a: axilite_dev_v1_0.v axilite_dev_v1_0_S00_AXI.v
+	$(VENV) $(VERILATOR) $(VFLAGS) $<
+	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk)
 
-ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
-$(TOP_O): $(VFILES_CPP) $(TOP_C)
-	$(MAKE) -C $(VOBJ_DIR) -f $(VTOP_MK) ../$(TOP_O)
+$(VOBJ_DIR)/Vaxifull_dev_v1_0__ALL.a: axifull_dev_v1_0.v axifull_dev_v1_0_S00_AXI.v
+	$(VENV) $(VERILATOR) $(VFLAGS) $<
+	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk)
 endif
 
 ifeq "$(HAVE_VERILOG_VCS)" "y"
@@ -194,7 +196,6 @@ $(TARGET_ZYNQMP_DEMO): $(VFILES) $(SYSCAN_SCFILES) $(VCS_CFILES) $(SYSCAN_ZYNQMP
 	$(SYSCAN) $(SYSCAN_FLAGS) $(SYSCAN_ZYNQMP_DEMO) $(SYSCAN_SCFILES)
 	$(VCS) $(VCS_FLAGS) $(VFLAGS) $(VCS_CFILES) -o $@
 else
-$(ZYNQMP_OBJS): $(VTOP_LIB) $(VERILATED_O)
 
 $(TARGET_ZYNQMP_DEMO): $(ZYNQMP_OBJS) $(VTOP_LIB) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
