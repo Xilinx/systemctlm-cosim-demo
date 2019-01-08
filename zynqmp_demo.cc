@@ -373,7 +373,7 @@ SC_MODULE(Top)
                 tlm2apb_tmr->clk(*clk);
 
 		checker.clk(*clk);
-		checker.resetn(rst);
+		checker.resetn(rst_n);
 
 		checker.awvalid(al_awvalid);
 		checker.awready(al_awready);
