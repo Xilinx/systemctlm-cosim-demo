@@ -46,6 +46,7 @@ using namespace std;
 #include "demo-dma.h"
 #include "xilinx-zynqmp.h"
 
+#include "checkers/pc-axilite.h"
 #include "tlm-bridges/tlm2axilite-bridge.h"
 #include "tlm-bridges/tlm2axi-bridge.h"
 #include "tlm-bridges/tlm2apb-bridge.h"
@@ -81,6 +82,7 @@ SC_MODULE(Top)
 #ifdef HAVE_VERILOG
 	tlm2axilite_bridge<4, 32> *tlm2axi_al;
 	tlm2axi_bridge<10, AXIFULL_DATA_WIDTH> *tlm2axi_af;
+	AXILiteProtocolChecker<4, 32> checker;
 #else
 	memory mem_al;
 	memory mem_af;
@@ -183,12 +185,22 @@ SC_MODULE(Top)
 		rst_n.write(!rst.read());
 	}
 
+	AXILitePCConfig checker_config()
+	{
+		AXILitePCConfig cfg;
+
+		cfg.enable_all_checks();
+
+		return cfg;
+	}
+
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		rst("rst"),
 		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
+		checker("checker", checker_config()),
 		irq_tmr("irq_tmr"),
 #else
 		mem_al("mem_al", sc_time(1, SC_NS), 4 * 4),
@@ -360,6 +372,32 @@ SC_MODULE(Top)
 
                 tlm2apb_tmr->clk(*clk);
 
+		checker.clk(*clk);
+		checker.resetn(rst);
+
+		checker.awvalid(al_awvalid);
+		checker.awready(al_awready);
+		checker.awaddr(al_awaddr);
+		checker.awprot(al_awprot);
+
+		checker.wvalid(al_wvalid);
+		checker.wready(al_wready);
+		checker.wdata(al_wdata);
+		checker.wstrb(al_wstrb);
+
+		checker.bvalid(al_bvalid);
+		checker.bready(al_bready);
+		checker.bresp(al_bresp);
+
+		checker.arvalid(al_arvalid);
+		checker.arready(al_arready);
+		checker.araddr(al_araddr);
+		checker.arprot(al_arprot);
+
+		checker.rvalid(al_rvalid);
+		checker.rready(al_rready);
+		checker.rdata(al_rdata);
+		checker.rresp(al_rresp);
 
 		al->s00_axi_aclk(*clk);
 		al->s00_axi_aresetn(rst_n);
