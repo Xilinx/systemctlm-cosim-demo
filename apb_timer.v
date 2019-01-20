@@ -62,7 +62,7 @@ always	@(posedge clk) begin
 		// We do single cycle accesses
 		pready <= penable;
 		if (penable && pwrite) begin
-			case (paddr)
+			case (paddr[15:2])
 				0: begin
 					tmr_cfg <= pwdata[1:0];
 					// When enabling the timer, reload
@@ -81,7 +81,7 @@ always	@(posedge clk) begin
 				3: tmr_free_cnt <= pwdata;
 			endcase
 		end
-		case (paddr)
+		case (paddr[15:2])
 			0: prdata[1:0] <= tmr_cfg;
 			1: prdata <= tmr_cnt;
 			2: prdata <= tmr_div;
