@@ -175,15 +175,12 @@ all: $(TARGETS)
 
 -include $(ZYNQ_OBJS:.o=.d)
 -include $(ZYNQMP_OBJS:.o=.d)
+-include $(ZYNQMP_LMAC2_OBJS:.o=.d)
 CFLAGS += -MMD
 CXXFLAGS += -MMD
 
 ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
 include $(VERILATOR_ROOT)/include/verilated.mk
-
-$(ZYNQMP_LMAC2_TOP_O): $(V_LDLIBS)
-$(ZYNQMP_TOP_O): $(V_LDLIBS)
-$(VERILATED_O): $(V_LDLIBS)
 
 #
 # LMAC2
@@ -196,6 +193,10 @@ include files-lmac2.mk
 $(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a: $(LM_CORE)
 	$(VENV) $(VERILATOR) $(VFLAGS) $^
 	$(MAKE) -C $(VOBJ_DIR) -f Vlmac_wrapper_top.mk
+
+$(ZYNQMP_LMAC2_TOP_O): $(V_LDLIBS)
+$(ZYNQMP_TOP_O): $(V_LDLIBS)
+$(VERILATED_O): $(V_LDLIBS)
 
 $(VOBJ_DIR)/V%__ALL.a: %.v
 	$(VENV) $(VERILATOR) $(VFLAGS) $<
