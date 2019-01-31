@@ -80,6 +80,7 @@ SC_OBJS += memory.o
 SC_OBJS += trace.o
 SC_OBJS += debugdev.o
 SC_OBJS += demo-dma.o
+SC_OBJS += xilinx-axidma.o
 
 LIBSOC_PATH=libsystemctlm-soc
 CPPFLAGS += -I $(LIBSOC_PATH)
