@@ -44,7 +44,6 @@ using namespace std;
 #include "memory.h"
 #include "xilinx-axidma.h"
 #include "xilinx-zynqmp.h"
-#include "tlm-xgmii-phy.h"
 
 #include "tlm-bridges/tlm2apb-bridge.h"
 #include "tlm-bridges/tlm2axis-bridge.h"
