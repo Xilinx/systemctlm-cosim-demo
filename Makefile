@@ -127,6 +127,13 @@ VFLAGS += -CFLAGS "-DHAVE_VERILOG" -CFLAGS "-DHAVE_VERILOG_VERILATOR"
 CPPFLAGS += -DHAVE_VERILOG
 CPPFLAGS += -DHAVE_VERILOG_VERILATOR
 CPPFLAGS += -I $(VOBJ_DIR)
+
+ifeq "$(VM_TRACE)" "1"
+VFLAGS += --trace
+SC_OBJS += verilated_vcd_c.o
+SC_OBJS += verilated_vcd_sc.o
+CPPFLAGS += -DVM_TRACE=1
+endif
 endif
 
 ifeq "$(HAVE_VERILOG_VCS)" "y"
@@ -205,6 +212,8 @@ endif
 
 $(TARGET_ZYNQ_DEMO): $(ZYNQ_OBJS) $(VTOP_LIB) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+verilated_%.o: $(VERILATOR_ROOT)/include/verilated_%.cpp
 
 clean:
 	$(RM) $(OBJS) $(OBJS:.o=.d) $(TARGETS)
