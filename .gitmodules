@@ -1,3 +1,6 @@
 [submodule "libsystemctlm-soc"]
 	path = libsystemctlm-soc
 	url = ../libsystemctlm-soc.git
+[submodule "LMAC_CORE2"]
+	path = LMAC_CORE2
+	url = ../../lewiz-support/LMAC_CORE2.git
