@@ -67,9 +67,12 @@ ZYNQ_TOP_C = zynq_demo.cc
 ZYNQ_TOP_O = $(ZYNQ_TOP_C:.cc=.o)
 ZYNQMP_TOP_C = zynqmp_demo.cc
 ZYNQMP_TOP_O = $(ZYNQMP_TOP_C:.cc=.o)
+ZYNQMP_LMAC2_TOP_C = zynqmp_lmac2_demo.cc
+ZYNQMP_LMAC2_TOP_O = $(ZYNQMP_LMAC2_TOP_C:.cc=.o)
 
 ZYNQ_OBJS += $(ZYNQ_TOP_O)
 ZYNQMP_OBJS += $(ZYNQMP_TOP_O)
+ZYNQMP_LMAC2_OBJS += $(ZYNQMP_LMAC2_TOP_O)
 
 # Uncomment to enable use of scml2
 # CPPFLAGS += -I $(SCML_INCLUDE)
@@ -152,6 +155,7 @@ VHDLAN_FLAGS += -sc_model apb_slave_dummy
 
 SYSCAN_ZYNQ_DEMO = zynq_demo.cc
 SYSCAN_ZYNQMP_DEMO = zynqmp_demo.cc
+SYSCAN_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo.cc
 SYSCAN_SCFILES += demo-dma.cc debugdev.cc remote-port-tlm.cc
 VCS_CFILES += remote-port-proto.c remote-port-sk.c safeio.c
 
@@ -165,22 +169,42 @@ OBJS = $(C_OBJS) $(SC_OBJS)
 
 ZYNQ_OBJS += $(OBJS)
 ZYNQMP_OBJS += $(OBJS)
+ZYNQMP_LMAC2_OBJS += $(OBJS)
 
 TARGET_ZYNQ_DEMO = zynq_demo
 TARGET_ZYNQMP_DEMO = zynqmp_demo
+TARGET_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo
 
 TARGETS = $(TARGET_ZYNQ_DEMO) $(TARGET_ZYNQMP_DEMO)
+
+#
+# LMAC2
+#
+LM2_DIR=LMAC_CORE2/LMAC2_INFO/
+
+LM_CORE = lmac_wrapper_top.v
+include files-lmac2.mk
+ifneq ($(wildcard $(LM2_DIR)/.),)
+TARGETS += $(TARGET_ZYNQMP_LMAC2_DEMO)
+V_LDLIBS += $(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a
+endif
 
 all: $(TARGETS)
 
 -include $(ZYNQ_OBJS:.o=.d)
 -include $(ZYNQMP_OBJS:.o=.d)
+-include $(ZYNQMP_LMAC2_OBJS:.o=.d)
 CFLAGS += -MMD
 CXXFLAGS += -MMD
 
 ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
 include $(VERILATOR_ROOT)/include/verilated.mk
 
+$(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a: $(LM_CORE)
+	$(VENV) $(VERILATOR) $(VFLAGS) $^
+	$(MAKE) -C $(VOBJ_DIR) -f Vlmac_wrapper_top.mk
+
+$(ZYNQMP_LMAC2_TOP_O): $(V_LDLIBS)
 $(ZYNQMP_TOP_O): $(V_LDLIBS)
 $(VERILATED_O): $(V_LDLIBS)
 
@@ -208,6 +232,9 @@ else
 $(TARGET_ZYNQMP_DEMO): $(ZYNQMP_OBJS) $(VTOP_LIB) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
+$(TARGET_ZYNQMP_LMAC2_DEMO): $(ZYNQMP_LMAC2_OBJS) $(VTOP_LIB) $(VERILATED_O)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
 endif
 
 $(TARGET_ZYNQ_DEMO): $(ZYNQ_OBJS) $(VTOP_LIB) $(VERILATED_O)
@@ -219,4 +246,5 @@ clean:
 	$(RM) $(OBJS) $(OBJS:.o=.d) $(TARGETS)
 	$(RM) $(ZYNQ_OBJS) $(ZYNQ_OBJS:.o=.d)
 	$(RM) $(ZYNQMP_OBJS) $(ZYNQMP_OBJS:.o=.d)
+	$(RM) $(ZYNQMP_LMAC2_OBJS) $(ZYNQMP_LMAC2_OBJS:.o=.d)
 	$(RM) -r $(VOBJ_DIR) $(CSRC_DIR) *.daidir
