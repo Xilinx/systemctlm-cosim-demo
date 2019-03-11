@@ -60,7 +60,7 @@ CPPFLAGS += -I $(TLM2)/include/tlm
 endif
 
 CPPFLAGS += -I .
-LDFLAGS = -L $(SYSTEMC_LIBDIR)
+LDFLAGS  += -L $(SYSTEMC_LIBDIR)
 LDLIBS   += -lsystemc
 
 ZYNQ_TOP_C = zynq_demo.cc
