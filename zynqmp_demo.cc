@@ -56,7 +56,7 @@ using namespace std;
 
 #ifdef HAVE_VERILOG_VERILATOR
 #include "Vapb_timer.h"
-#include "Vaxilite_dev_v1_0.h"
+#include "Vaxilite_dev.h"
 #include "Vaxifull_dev.h"
 #include "verilated.h"
 #endif
@@ -94,7 +94,7 @@ SC_MODULE(Top)
 #endif
 #ifdef HAVE_VERILOG_VERILATOR
 	Vapb_timer *apb_timer;
-	Vaxilite_dev_v1_0 *al;
+	Vaxilite_dev *al;
 	Vaxifull_dev *af;
 #endif
 	sc_signal<bool> irq_tmr;
@@ -356,7 +356,7 @@ SC_MODULE(Top)
 		apb_timer = new apb_slave_timer("apb_timer");
 #elif defined(HAVE_VERILOG_VERILATOR)
 		apb_timer = new Vapb_timer("apb_timer");
-		al = new Vaxilite_dev_v1_0("axilite-dev");
+		al = new Vaxilite_dev("axilite-dev");
 		af = new Vaxifull_dev("axifull-dev");
 #endif
                 apb_timer->clk(*clk);

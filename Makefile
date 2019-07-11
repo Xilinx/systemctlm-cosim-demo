@@ -117,7 +117,7 @@ VERILATOR=verilator
 VM_TRACE?=0
 VM_COVERAGE?=0
 V_LDLIBS += $(VOBJ_DIR)/Vapb_timer__ALL.a
-V_LDLIBS += $(VOBJ_DIR)/Vaxilite_dev_v1_0__ALL.a
+V_LDLIBS += $(VOBJ_DIR)/Vaxilite_dev__ALL.a
 V_LDLIBS += $(VOBJ_DIR)/Vaxifull_dev__ALL.a
 LDLIBS += $(V_LDLIBS)
 VERILATED_O=$(VOBJ_DIR)/verilated.o
@@ -213,9 +213,13 @@ $(VOBJ_DIR)/V%__ALL.a: %.v
 	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk)
 	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk) verilated.o
 
-$(VOBJ_DIR)/Vaxilite_dev_v1_0__ALL.a: axilite_dev_v1_0.v axilite_dev_v1_0_S00_AXI.v
+EX_AXI4LITE_PATH = $(LIBSOC_PATH)/tests/example-rtl-axi4lite
+AXILITE_DEV_V = axilite_dev.v
+VFLAGS += -y $(EX_AXI4LITE_PATH)
+
+$(VOBJ_DIR)/Vaxilite_dev__ALL.a: $(EX_AXI4LITE_PATH)/$(AXILITE_DEV_V)
 	$(VENV) $(VERILATOR) $(VFLAGS) $<
-	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk)
+	$(MAKE) -C $(VOBJ_DIR) -f V$(AXILITE_DEV_V:.v=.mk)
 
 EX_AXI4_PATH = $(LIBSOC_PATH)/tests/example-rtl-axi4
 AXIFULL_DEV_V = axifull_dev.v
