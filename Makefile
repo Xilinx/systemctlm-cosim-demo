@@ -202,7 +202,7 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 
 $(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a: $(LM_CORE)
 	$(VENV) $(VERILATOR) $(VFLAGS) $^
-	$(MAKE) -C $(VOBJ_DIR) -f Vlmac_wrapper_top.mk
+	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f Vlmac_wrapper_top.mk
 
 $(ZYNQMP_LMAC2_TOP_O): $(V_LDLIBS)
 $(ZYNQMP_TOP_O): $(V_LDLIBS)
@@ -210,8 +210,8 @@ $(VERILATED_O): $(V_LDLIBS)
 
 $(VOBJ_DIR)/V%__ALL.a: %.v
 	$(VENV) $(VERILATOR) $(VFLAGS) $<
-	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk)
-	$(MAKE) -C $(VOBJ_DIR) -f V$(<:.v=.mk) verilated.o
+	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f V$(<:.v=.mk)
+	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f V$(<:.v=.mk) verilated.o
 
 EX_AXI4LITE_PATH = $(LIBSOC_PATH)/tests/example-rtl-axi4lite
 AXILITE_DEV_V = axilite_dev.v
@@ -219,7 +219,7 @@ VFLAGS += -y $(EX_AXI4LITE_PATH)
 
 $(VOBJ_DIR)/Vaxilite_dev__ALL.a: $(EX_AXI4LITE_PATH)/$(AXILITE_DEV_V)
 	$(VENV) $(VERILATOR) $(VFLAGS) $<
-	$(MAKE) -C $(VOBJ_DIR) -f V$(AXILITE_DEV_V:.v=.mk)
+	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f V$(AXILITE_DEV_V:.v=.mk)
 
 EX_AXI4_PATH = $(LIBSOC_PATH)/tests/example-rtl-axi4
 AXIFULL_DEV_V = axifull_dev.v
@@ -227,7 +227,7 @@ VFLAGS += -y $(EX_AXI4_PATH)
 
 $(VOBJ_DIR)/Vaxifull_dev__ALL.a: $(EX_AXI4_PATH)/$(AXIFULL_DEV_V)
 	$(VENV) $(VERILATOR) $(VFLAGS) $<
-	$(MAKE) -C $(VOBJ_DIR) -f V$(AXIFULL_DEV_V:.v=.mk)
+	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f V$(AXIFULL_DEV_V:.v=.mk)
 endif
 
 ifeq "$(HAVE_VERILOG_VCS)" "y"
