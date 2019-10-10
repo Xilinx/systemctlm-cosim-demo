@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+// Copyright (c) 2019 Xilinx Inc.
+// Written by Francisco Iglesias.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+-->
+<ipxact:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xmlns:kactus2="http://kactus2.cs.tut.fi" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
+	<ipxact:vendor>xilinx.com</ipxact:vendor>
+	<ipxact:library>demos</ipxact:library>
+	<ipxact:name>zynqmp_lmac2_demo</ipxact:name>
+	<ipxact:version>1.0</ipxact:version>
+	<ipxact:model>
+		<ipxact:views>
+			<ipxact:view>
+				<ipxact:name>hierarchical</ipxact:name>
+				<ipxact:designConfigurationInstantiationRef>zynqmp_lmac2_demo.designcfg_1.0</ipxact:designConfigurationInstantiationRef>
+			</ipxact:view>
+		</ipxact:views>
+		<ipxact:instantiations>
+			<ipxact:designConfigurationInstantiation>
+				<ipxact:name>zynqmp_lmac2_demo.designcfg_1.0</ipxact:name>
+				<ipxact:designConfigurationRef vendor="xilinx.com" library="demos" name="zynqmp_lmac2_demo.designcfg" version="1.0"/>
+			</ipxact:designConfigurationInstantiation>
+		</ipxact:instantiations>
+		<ipxact:ports>
+			<ipxact:port>
+				<ipxact:name>clk</ipxact:name>
+				<ipxact:wire>
+					<ipxact:direction>in</ipxact:direction>
+					<ipxact:wireTypeDefs>
+						<ipxact:wireTypeDef>
+							<ipxact:typeName>bool</ipxact:typeName>
+						</ipxact:wireTypeDef>
+					</ipxact:wireTypeDefs>
+				</ipxact:wire>
+				<ipxact:vendorExtensions>
+					<kactus2:adHocVisible/>
+				</ipxact:vendorExtensions>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>rst</ipxact:name>
+				<ipxact:wire>
+					<ipxact:direction>in</ipxact:direction>
+					<ipxact:wireTypeDefs>
+						<ipxact:wireTypeDef>
+							<ipxact:typeName>bool</ipxact:typeName>
+						</ipxact:wireTypeDef>
+					</ipxact:wireTypeDefs>
+				</ipxact:wire>
+				<ipxact:vendorExtensions>
+					<kactus2:adHocVisible/>
+				</ipxact:vendorExtensions>
+			</ipxact:port>
+		</ipxact:ports>
+	</ipxact:model>
+	<ipxact:parameters>
+		<ipxact:parameter parameterId="uuid_7e61350a_2df4_4d74_bfe9_87de53edbe7f" type="int">
+			<ipxact:name>clockPeriod</ipxact:name>
+			<ipxact:value>10</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_fe699ab2_2a1b_4930_a6dd_68e1f926e6ad">
+			<ipxact:name>clockPort</ipxact:name>
+			<ipxact:value>clk</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_fe9f3d4f_51dd_402d_bc46_85434b09138c" type="int">
+			<ipxact:name>clockPulseDuration</ipxact:name>
+			<ipxact:value>5</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_db12aa64_02d6_4257_af89_7a7519ad0813">
+			<ipxact:name>clockTimeUnit</ipxact:name>
+			<ipxact:value>us</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_4803a518_167c_4432_ab6d_0d838cd4ac31">
+			<ipxact:name>resetPort</ipxact:name>
+			<ipxact:value>rst</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_51ffea2d_b3d3_4524_a5a6_54a86a7cc5dc" type="int">
+			<ipxact:name>singleShotDuration</ipxact:name>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_58c60248_8bef_43ec_b60e_3b64bebce21f" type="int">
+			<ipxact:name>singleShotOffset</ipxact:name>
+			<ipxact:value>0</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_abd339ae_e736_409f_9010_eaad3d249b2c">
+			<ipxact:name>singleShotTimeUnit</ipxact:name>
+			<ipxact:value>us</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_3089fcbd_8b15_46d7_96e9_676bd92633b6" type="int">
+			<ipxact:name>singleShotValue</ipxact:name>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
+	</ipxact:parameters>
+</ipxact:component>

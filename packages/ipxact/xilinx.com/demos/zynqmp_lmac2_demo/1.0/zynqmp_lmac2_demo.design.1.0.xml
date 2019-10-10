@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+// Copyright (c) 2019 Xilinx Inc.
+// Written by Francisco Iglesias.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+-->
+<ipxact:design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xmlns:kactus2="http://kactus2.cs.tut.fi" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
+	<ipxact:vendor>xilinx.com</ipxact:vendor>
+	<ipxact:library>demos</ipxact:library>
+	<ipxact:name>zynqmp_lmac2_demo.design</ipxact:name>
+	<ipxact:version>1.0</ipxact:version>
+	<ipxact:componentInstances>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>xilinx_zynqmp_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="xilinx_zynqmp" version="1.0">
+				<ipxact:configurableElementValues>
+					<ipxact:configurableElementValue referenceId="EMULATOR_ARGS">-M arm-generic-fdt -hw-dtb zcu102-arm.cosim.dtb -machine-path ./machine-zynqmp -serial mon:stdio -display none -netdev user,id=net0 -netdev user,id=net1 -netdev user,id=net2 -netdev user,id=net3 -netdev user,id=net4 -net nic,model=cadence_gem,netdev=net0 -net nic,model=cadence_gem,netdev=net1 -net nic,model=cadence_gem,netdev=net2 -net nic,model=cadence_gem,netdev=net3 -device remote-port-net,rp-adaptor0=/amba@0/cosim@0,rp-chan0=256,rp-chan1=266,netdev=net4 -object filter-dump,netdev=net0,id=dump0,file=trace0.pcap -object filter-dump,netdev=net1,id=dump1,file=trace1.pcap -object filter-dump,netdev=net2,id=dump2,file=trace2.pcap -object filter-dump,netdev=net3,id=dump3,file=trace3.pcap -object filter-dump,netdev=net4,id=dump4,file=trace4.pcap -m 2G -machine linux=yes -kernel Image -dtb zcu102.dtb -append \"rdinit=/sbin/init console=ttyPS0 earlycon=cdns,mmio,0xFF000000,115200n8\"</ipxact:configurableElementValue>
+					<ipxact:configurableElementValue referenceId="EMULATOR">qemu-system-aarch64</ipxact:configurableElementValue>
+					<ipxact:configurableElementValue referenceId="SK_DESCR">unix:./machine-zynqmp/qemu-rport-_amba@0_cosim@0</ipxact:configurableElementValue>
+				</ipxact:configurableElementValues>
+			</ipxact:componentRef>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{6c1d152c-812c-44bd-9e5a-9d875c03e00c}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="s_axi_hpc_fpd" x="110" y="200"/>
+					<kactus2:portPosition busRef="s_axi_hpc_fpd_0" x="110" y="110"/>
+					<kactus2:portPosition busRef="s_axi_hpm_fpd_0" x="110" y="60"/>
+					<kactus2:portPosition busRef="user_master_0" x="110" y="320"/>
+					<kactus2:portPosition busRef="user_slave_0" x="110" y="360"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="pl2ps_irq" x="-110" y="220"/>
+					<kactus2:adHocVisible portName="rst" x="-110" y="160"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="390" y="60"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>iconnect_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="systemctlm-cosim-demo" name="iconnect" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{8e97c8ae-3f75-42d6-96f8-30d8b4dadf82}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="i_sk_0" x="110" y="70"/>
+					<kactus2:portPosition busRef="i_sk_1" x="110" y="110"/>
+					<kactus2:portPosition busRef="i_sk_2" x="110" y="160"/>
+					<kactus2:portPosition busRef="i_sk_3" x="110" y="210"/>
+					<kactus2:portPosition busRef="t_sk_0" x="-110" y="60"/>
+					<kactus2:portPosition busRef="t_sk_1" x="-110" y="110"/>
+					<kactus2:portPosition busRef="t_sk_2" x="-110" y="160"/>
+				</kactus2:portPositions>
+				<kactus2:position x="820" y="60"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>axidma_mm2s_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="systemctlm-cosim-demo" name="axidma_mm2s" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{bdacf6c6-6dca-4cde-9827-b15b236cdabf}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="init_target" x="110" y="140"/>
+					<kactus2:portPosition busRef="stream_target" x="110" y="180"/>
+					<kactus2:portPosition busRef="tgt_target" x="110" y="100"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="irq" x="-110" y="80"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="390" y="470"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>axidma_s2mm_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="systemctlm-cosim-demo" name="axidma_s2mm" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{b1bfd08f-43f3-4837-a9cc-90759be36ec6}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="init_target" x="110" y="140"/>
+					<kactus2:portPosition busRef="stream_target" x="110" y="180"/>
+					<kactus2:portPosition busRef="tgt_target" x="110" y="100"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="irq" x="-110" y="120"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="390" y="700"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>tlm2axis_bridge_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlm2axis_bridge" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{a07a621c-86cd-4f52-a3a8-cd4c8f7890d3}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="AXISMaster" x="110" y="110"/>
+					<kactus2:portPosition busRef="tlm_target" x="-110" y="150"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="60"/>
+					<kactus2:adHocVisible portName="resetn" x="-110" y="100"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="820" y="320"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>axis2tlm_bridge_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="axis2tlm_bridge" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{712c1022-cc4b-429d-93c0-24fa457b3057}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="AXISSlave" x="110" y="120"/>
+					<kactus2:portPosition busRef="tlm_init" x="-110" y="160"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="70"/>
+					<kactus2:adHocVisible portName="resetn" x="-110" y="100"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="820" y="520"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>tlm2apb_bridge_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlm2apb_bridge" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{d63dda87-dd54-45d0-b161-cfca3e7a3d2b}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="APBMaster" x="110" y="120"/>
+					<kactus2:portPosition busRef="tlm_target" x="110" y="80"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="90"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="820" y="730"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>lmac_wrapper_top_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="le_wiz" library="components" name="lmac_wrapper_top" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{25b9da1b-dcf0-4ece-8e5c-a0a90d1bb1f8}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="rx_axis_mac" x="-110" y="580"/>
+					<kactus2:portPosition busRef="s00_axi_apb" x="-110" y="790"/>
+					<kactus2:portPosition busRef="tx_axis_mac" x="-110" y="370"/>
+					<kactus2:portPosition busRef="xgmii_master" x="-110" y="950"/>
+					<kactus2:portPosition busRef="xgmii_slave" x="-110" y="1110"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="90"/>
+					<kactus2:adHocVisible portName="rst_n" x="-110" y="120"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="1200" y="60"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>signal_inverter_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="signal_inverter" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{e744cc15-048a-4f1b-bfb2-17462e098156}</kactus2:uuid>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="in" x="-110" y="90"/>
+					<kactus2:adHocVisible portName="out" x="110" y="90"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="390" y="930"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>tlm_xgmii_phy_0</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="systemctlm-cosim-demo" name="tlm_xgmii_phy" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{0e5c76f1-2241-4f70-b428-1dd42e631361}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="tlm_init" x="-110" y="100"/>
+					<kactus2:portPosition busRef="tlm_target" x="-110" y="140"/>
+					<kactus2:portPosition busRef="xgmii_master" x="110" y="220"/>
+					<kactus2:portPosition busRef="xgmii_slave" x="110" y="180"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="60"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="820" y="900"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+	</ipxact:componentInstances>
+	<ipxact:interconnections>
+		<ipxact:interconnection>
+			<ipxact:name>iconnect_0_i_sk_3_to_xilinx_zynqmp_0_s_axi_hpc_fpd_0</ipxact:name>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="i_sk_3"/>
+			<ipxact:activeInterface componentRef="xilinx_zynqmp_0" busRef="s_axi_hpc_fpd_0"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>xilinx_zynqmp_0_s_axi_hpm_fpd_0_to_iconnect_0_t_sk_0</ipxact:name>
+			<ipxact:activeInterface componentRef="xilinx_zynqmp_0" busRef="s_axi_hpm_fpd_0"/>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="t_sk_0"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>axidma_mm2s_0_tgt_target_to_iconnect_0_i_sk_1</ipxact:name>
+			<ipxact:activeInterface componentRef="axidma_mm2s_0" busRef="tgt_target"/>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="i_sk_1"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>axidma_mm2s_0_init_target_to_iconnect_0_t_sk_1</ipxact:name>
+			<ipxact:activeInterface componentRef="axidma_mm2s_0" busRef="init_target"/>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="t_sk_1"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>axidma_s2mm_0_tgt_target_to_iconnect_0_i_sk_2</ipxact:name>
+			<ipxact:activeInterface componentRef="axidma_s2mm_0" busRef="tgt_target"/>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="i_sk_2"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>axidma_s2mm_0_init_target_to_iconnect_0_t_sk_2</ipxact:name>
+			<ipxact:activeInterface componentRef="axidma_s2mm_0" busRef="init_target"/>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="t_sk_2"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>axidma_mm2s_0_stream_target_to_tlm2axis_bridge_0_tlm_target</ipxact:name>
+			<ipxact:activeInterface componentRef="axidma_mm2s_0" busRef="stream_target"/>
+			<ipxact:activeInterface componentRef="tlm2axis_bridge_0" busRef="tlm_target"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>axis2tlm_bridge_0_tlm_init_to_axidma_s2mm_0_stream_target</ipxact:name>
+			<ipxact:activeInterface componentRef="axis2tlm_bridge_0" busRef="tlm_init"/>
+			<ipxact:activeInterface componentRef="axidma_s2mm_0" busRef="stream_target"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tlm2apb_bridge_0_tlm_target_to_iconnect_0_i_sk_0</ipxact:name>
+			<ipxact:activeInterface componentRef="tlm2apb_bridge_0" busRef="tlm_target"/>
+			<ipxact:activeInterface componentRef="iconnect_0" busRef="i_sk_0"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tlm2axis_bridge_0_AXISMaster_to_lmac_wrapper_top_0_tx_axis_mac</ipxact:name>
+			<ipxact:activeInterface componentRef="tlm2axis_bridge_0" busRef="AXISMaster"/>
+			<ipxact:activeInterface componentRef="lmac_wrapper_top_0" busRef="tx_axis_mac"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>lmac_wrapper_top_0_rx_axis_mac_to_axis2tlm_bridge_0_AXISSlave</ipxact:name>
+			<ipxact:activeInterface componentRef="lmac_wrapper_top_0" busRef="rx_axis_mac"/>
+			<ipxact:activeInterface componentRef="axis2tlm_bridge_0" busRef="AXISSlave"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tlm2apb_bridge_0_APBMaster_to_lmac_wrapper_top_0_s00_axi_apb</ipxact:name>
+			<ipxact:activeInterface componentRef="tlm2apb_bridge_0" busRef="APBMaster"/>
+			<ipxact:activeInterface componentRef="lmac_wrapper_top_0" busRef="s00_axi_apb"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>lmac_wrapper_top_0_xgmii_master_to_tlm_xgmii_phy_0_xgmii_slave</ipxact:name>
+			<ipxact:activeInterface componentRef="lmac_wrapper_top_0" busRef="xgmii_master"/>
+			<ipxact:activeInterface componentRef="tlm_xgmii_phy_0" busRef="xgmii_slave"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tlm_xgmii_phy_0_xgmii_master_to_lmac_wrapper_top_0_xgmii_slave</ipxact:name>
+			<ipxact:activeInterface componentRef="tlm_xgmii_phy_0" busRef="xgmii_master"/>
+			<ipxact:activeInterface componentRef="lmac_wrapper_top_0" busRef="xgmii_slave"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>xilinx_zynqmp_0_user_master_0_to_tlm_xgmii_phy_0_tlm_target</ipxact:name>
+			<ipxact:activeInterface componentRef="xilinx_zynqmp_0" busRef="user_master_0"/>
+			<ipxact:activeInterface componentRef="tlm_xgmii_phy_0" busRef="tlm_target"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tlm_xgmii_phy_0_tlm_init_to_xilinx_zynqmp_0_user_slave_0</ipxact:name>
+			<ipxact:activeInterface componentRef="tlm_xgmii_phy_0" busRef="tlm_init"/>
+			<ipxact:activeInterface componentRef="xilinx_zynqmp_0" busRef="user_slave_0"/>
+		</ipxact:interconnection>
+	</ipxact:interconnections>
+	<ipxact:adHocConnections>
+		<ipxact:adHocConnection>
+			<ipxact:name>axidma_mm2s_0_irq_to_xilinx_zynqmp_0_pl2ps_irq</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="axidma_mm2s_0" portRef="irq"/>
+				<ipxact:internalPortReference componentRef="xilinx_zynqmp_0" portRef="pl2ps_irq">
+					<ipxact:partSelect>
+						<ipxact:range>
+							<ipxact:left>2</ipxact:left>
+							<ipxact:right>2</ipxact:right>
+						</ipxact:range>
+					</ipxact:partSelect>
+				</ipxact:internalPortReference>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>axidma_s2mm_0_irq_to_xilinx_zynqmp_0_pl2ps_irq</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="axidma_s2mm_0" portRef="irq"/>
+				<ipxact:internalPortReference componentRef="xilinx_zynqmp_0" portRef="pl2ps_irq">
+					<ipxact:partSelect>
+						<ipxact:range>
+							<ipxact:left>4</ipxact:left>
+							<ipxact:right>4</ipxact:right>
+						</ipxact:range>
+					</ipxact:partSelect>
+				</ipxact:internalPortReference>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>xilinx_zynqmp_0_rst_to_rst</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="xilinx_zynqmp_0" portRef="rst"/>
+				<ipxact:externalPortReference portRef="rst"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>tlm2axis_bridge_0_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="tlm2axis_bridge_0" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>axis2tlm_bridge_0_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="axis2tlm_bridge_0" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>lmac_wrapper_top_0_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="lmac_wrapper_top_0" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>tlm2apb_bridge_0_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="tlm2apb_bridge_0" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>signal_inverter_0_in_to_rst</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="signal_inverter_0" portRef="in"/>
+				<ipxact:externalPortReference portRef="rst"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>signal_inverter_0_out_to_axis2tlm_bridge_0_resetn</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="signal_inverter_0" portRef="out"/>
+				<ipxact:internalPortReference componentRef="axis2tlm_bridge_0" portRef="resetn"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>signal_inverter_0_out_to_tlm2axis_bridge_0_resetn</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="signal_inverter_0" portRef="out"/>
+				<ipxact:internalPortReference componentRef="tlm2axis_bridge_0" portRef="resetn"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>signal_inverter_0_out_to_lmac_wrapper_top_0_rst_n</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="signal_inverter_0" portRef="out"/>
+				<ipxact:internalPortReference componentRef="lmac_wrapper_top_0" portRef="rst_n"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>tlm_xgmii_phy_0_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="tlm_xgmii_phy_0" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+	</ipxact:adHocConnections>
+	<ipxact:vendorExtensions>
+		<kactus2:columnLayout>
+			<kactus2:column name="IO" contentType="0" allowedItems="1" minWidth="119" width="119" x="0"/>
+			<kactus2:column name="Buses" contentType="1" allowedItems="12" minWidth="319" width="319" x="660"/>
+			<kactus2:column name="Components" contentType="2" allowedItems="2" minWidth="319" width="539" x="120"/>
+			<kactus2:column name="IO" contentType="0" allowedItems="1" minWidth="119" width="119" x="1420"/>
+			<kactus2:column name="Components" contentType="2" allowedItems="2" minWidth="319" width="439" x="980"/>
+		</kactus2:columnLayout>
+		<kactus2:routes>
+			<kactus2:route kactus2:connRef="iconnect_0_i_sk_3_to_xilinx_zynqmp_0_s_axi_hpc_fpd_0" kactus2:offPage="false">
+				<kactus2:position x="930" y="270"/>
+				<kactus2:position x="950" y="270"/>
+				<kactus2:position x="950" y="170"/>
+				<kactus2:position x="500" y="170"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="xilinx_zynqmp_0_s_axi_hpm_fpd_0_to_iconnect_0_t_sk_0" kactus2:offPage="false">
+				<kactus2:position x="500" y="120"/>
+				<kactus2:position x="710" y="120"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="axidma_mm2s_0_tgt_target_to_iconnect_0_i_sk_1" kactus2:offPage="false">
+				<kactus2:position x="500" y="570"/>
+				<kactus2:position x="960" y="570"/>
+				<kactus2:position x="960" y="170"/>
+				<kactus2:position x="930" y="170"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="axidma_mm2s_0_init_target_to_iconnect_0_t_sk_1" kactus2:offPage="false">
+				<kactus2:position x="500" y="610"/>
+				<kactus2:position x="690" y="610"/>
+				<kactus2:position x="690" y="170"/>
+				<kactus2:position x="710" y="170"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="axidma_s2mm_0_tgt_target_to_iconnect_0_i_sk_2" kactus2:offPage="false">
+				<kactus2:position x="500" y="800"/>
+				<kactus2:position x="970" y="800"/>
+				<kactus2:position x="970" y="220"/>
+				<kactus2:position x="930" y="220"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="axidma_s2mm_0_init_target_to_iconnect_0_t_sk_2" kactus2:offPage="false">
+				<kactus2:position x="500" y="840"/>
+				<kactus2:position x="680" y="840"/>
+				<kactus2:position x="680" y="220"/>
+				<kactus2:position x="710" y="220"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="axidma_mm2s_0_irq_to_xilinx_zynqmp_0_pl2ps_irq" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="axidma_s2mm_0_irq_to_xilinx_zynqmp_0_pl2ps_irq" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="axidma_mm2s_0_stream_target_to_tlm2axis_bridge_0_tlm_target" kactus2:offPage="false">
+				<kactus2:position x="500" y="650"/>
+				<kactus2:position x="670" y="650"/>
+				<kactus2:position x="670" y="470"/>
+				<kactus2:position x="710" y="470"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="axis2tlm_bridge_0_tlm_init_to_axidma_s2mm_0_stream_target" kactus2:offPage="false">
+				<kactus2:position x="710" y="680"/>
+				<kactus2:position x="520" y="680"/>
+				<kactus2:position x="520" y="880"/>
+				<kactus2:position x="500" y="880"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tlm2apb_bridge_0_tlm_target_to_iconnect_0_i_sk_0" kactus2:offPage="false">
+				<kactus2:position x="930" y="810"/>
+				<kactus2:position x="980" y="810"/>
+				<kactus2:position x="980" y="130"/>
+				<kactus2:position x="930" y="130"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tlm2axis_bridge_0_AXISMaster_to_lmac_wrapper_top_0_tx_axis_mac" kactus2:offPage="false">
+				<kactus2:position x="930" y="430"/>
+				<kactus2:position x="1090" y="430"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="lmac_wrapper_top_0_rx_axis_mac_to_axis2tlm_bridge_0_AXISSlave" kactus2:offPage="false">
+				<kactus2:position x="1090" y="640"/>
+				<kactus2:position x="930" y="640"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tlm2apb_bridge_0_APBMaster_to_lmac_wrapper_top_0_s00_axi_apb" kactus2:offPage="false">
+				<kactus2:position x="930" y="850"/>
+				<kactus2:position x="1090" y="850"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="xilinx_zynqmp_0_rst_to_rst" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="tlm2axis_bridge_0_clk_to_clk" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="axis2tlm_bridge_0_clk_to_clk" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="lmac_wrapper_top_0_clk_to_clk" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="tlm2apb_bridge_0_clk_to_clk" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="signal_inverter_0_in_to_rst" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="signal_inverter_0_out_to_axis2tlm_bridge_0_resetn" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="signal_inverter_0_out_to_tlm2axis_bridge_0_resetn" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="signal_inverter_0_out_to_lmac_wrapper_top_0_rst_n" kactus2:offPage="false"/>
+			<kactus2:route kactus2:connRef="lmac_wrapper_top_0_xgmii_master_to_tlm_xgmii_phy_0_xgmii_slave" kactus2:offPage="false">
+				<kactus2:position x="1090" y="1010"/>
+				<kactus2:position x="950" y="1010"/>
+				<kactus2:position x="950" y="1080"/>
+				<kactus2:position x="930" y="1080"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tlm_xgmii_phy_0_xgmii_master_to_lmac_wrapper_top_0_xgmii_slave" kactus2:offPage="false">
+				<kactus2:position x="930" y="1120"/>
+				<kactus2:position x="1070" y="1120"/>
+				<kactus2:position x="1070" y="1170"/>
+				<kactus2:position x="1090" y="1170"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tlm_xgmii_phy_0_clk_to_clk" kactus2:offPage="false">
+				<kactus2:position x="60" y="110"/>
+				<kactus2:position x="690" y="110"/>
+				<kactus2:position x="690" y="960"/>
+				<kactus2:position x="710" y="960"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="xilinx_zynqmp_0_user_master_0_to_tlm_xgmii_phy_0_tlm_target" kactus2:offPage="false">
+				<kactus2:position x="500" y="380"/>
+				<kactus2:position x="660" y="380"/>
+				<kactus2:position x="660" y="1040"/>
+				<kactus2:position x="710" y="1040"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tlm_xgmii_phy_0_tlm_init_to_xilinx_zynqmp_0_user_slave_0" kactus2:offPage="false">
+				<kactus2:position x="710" y="1000"/>
+				<kactus2:position x="530" y="1000"/>
+				<kactus2:position x="530" y="420"/>
+				<kactus2:position x="500" y="420"/>
+			</kactus2:route>
+		</kactus2:routes>
+		<kactus2:adHocVisibilities>
+			<kactus2:adHocVisible portName="clk" x="60" y="110"/>
+			<kactus2:adHocVisible portName="rst" x="60" y="70"/>
+		</kactus2:adHocVisibilities>
+	</ipxact:vendorExtensions>
+</ipxact:design>

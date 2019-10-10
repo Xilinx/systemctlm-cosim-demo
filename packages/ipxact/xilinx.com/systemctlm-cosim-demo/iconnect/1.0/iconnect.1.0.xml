@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+// Copyright (c) 2019 Xilinx Inc.
+// Written by Francisco Iglesias.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+-->
+<ipxact:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
+	<ipxact:vendor>xilinx.com</ipxact:vendor>
+	<ipxact:library>systemctlm-cosim-demo</ipxact:library>
+	<ipxact:name>iconnect</ipxact:name>
+	<ipxact:version>1.0</ipxact:version>
+	<ipxact:busInterfaces>
+		<ipxact:busInterface>
+			<ipxact:name>t_sk_0</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>t_sk_0</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:slave>
+				<ipxact:transparentBridge masterRef="i_sk_0"/>
+				<ipxact:transparentBridge masterRef="i_sk_1"/>
+				<ipxact:transparentBridge masterRef="i_sk_2"/>
+				<ipxact:transparentBridge masterRef="i_sk_3"/>
+			</ipxact:slave>
+		</ipxact:busInterface>
+		<ipxact:busInterface>
+			<ipxact:name>t_sk_1</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>t_sk_1</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:slave>
+				<ipxact:transparentBridge masterRef="i_sk_0"/>
+				<ipxact:transparentBridge masterRef="i_sk_1"/>
+				<ipxact:transparentBridge masterRef="i_sk_2"/>
+				<ipxact:transparentBridge masterRef="i_sk_3"/>
+			</ipxact:slave>
+		</ipxact:busInterface>
+		<ipxact:busInterface>
+			<ipxact:name>t_sk_2</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>t_sk_2</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:slave>
+				<ipxact:transparentBridge masterRef="i_sk_0"/>
+				<ipxact:transparentBridge masterRef="i_sk_1"/>
+				<ipxact:transparentBridge masterRef="i_sk_2"/>
+				<ipxact:transparentBridge masterRef="i_sk_3"/>
+			</ipxact:slave>
+		</ipxact:busInterface>
+		<ipxact:busInterface>
+			<ipxact:name>i_sk_0</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>i_sk_0</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:master>
+				<ipxact:addressSpaceRef addressSpaceRef="AS_I_SK_0">
+					<ipxact:baseAddress>'ha0030000</ipxact:baseAddress>
+				</ipxact:addressSpaceRef>
+			</ipxact:master>
+		</ipxact:busInterface>
+		<ipxact:busInterface>
+			<ipxact:name>i_sk_1</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>i_sk_1</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:master>
+				<ipxact:addressSpaceRef addressSpaceRef="AS_I_SK_1">
+					<ipxact:baseAddress>'ha0034000</ipxact:baseAddress>
+				</ipxact:addressSpaceRef>
+			</ipxact:master>
+		</ipxact:busInterface>
+		<ipxact:busInterface>
+			<ipxact:name>i_sk_2</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>i_sk_2</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:master>
+				<ipxact:addressSpaceRef addressSpaceRef="AS_I_SK_2">
+					<ipxact:baseAddress>'ha0035000</ipxact:baseAddress>
+				</ipxact:addressSpaceRef>
+			</ipxact:master>
+		</ipxact:busInterface>
+		<ipxact:busInterface>
+			<ipxact:name>i_sk_3</ipxact:name>
+			<ipxact:busType vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp" version="1.0"/>
+			<ipxact:abstractionTypes>
+				<ipxact:abstractionType>
+					<ipxact:abstractionRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlmgp.absDef" version="1.0"/>
+					<ipxact:portMaps>
+						<ipxact:portMap>
+							<ipxact:logicalPort>
+								<ipxact:name>tlmgp</ipxact:name>
+							</ipxact:logicalPort>
+							<ipxact:physicalPort>
+								<ipxact:name>i_sk_3</ipxact:name>
+							</ipxact:physicalPort>
+						</ipxact:portMap>
+					</ipxact:portMaps>
+				</ipxact:abstractionType>
+			</ipxact:abstractionTypes>
+			<ipxact:master>
+				<ipxact:addressSpaceRef addressSpaceRef="AS_I_SK_3">
+					<ipxact:baseAddress>'h0</ipxact:baseAddress>
+				</ipxact:addressSpaceRef>
+			</ipxact:master>
+		</ipxact:busInterface>
+	</ipxact:busInterfaces>
+	<ipxact:addressSpaces>
+		<ipxact:addressSpace>
+			<ipxact:name>AS_I_SK_0</ipxact:name>
+			<ipxact:range>'h4000</ipxact:range>
+			<ipxact:width>4096</ipxact:width>
+		</ipxact:addressSpace>
+		<ipxact:addressSpace>
+			<ipxact:name>AS_I_SK_1</ipxact:name>
+			<ipxact:range>'h100</ipxact:range>
+			<ipxact:width>4096</ipxact:width>
+		</ipxact:addressSpace>
+		<ipxact:addressSpace>
+			<ipxact:name>AS_I_SK_2</ipxact:name>
+			<ipxact:range>'h100</ipxact:range>
+			<ipxact:width>4096</ipxact:width>
+		</ipxact:addressSpace>
+		<ipxact:addressSpace>
+			<ipxact:name>AS_I_SK_3</ipxact:name>
+			<ipxact:range>'hffffffff</ipxact:range>
+			<ipxact:width>4096</ipxact:width>
+		</ipxact:addressSpace>
+	</ipxact:addressSpaces>
+	<ipxact:model>
+		<ipxact:views>
+			<ipxact:view>
+				<ipxact:name>SystemC</ipxact:name>
+				<ipxact:componentInstantiationRef>sc_implementation</ipxact:componentInstantiationRef>
+			</ipxact:view>
+		</ipxact:views>
+		<ipxact:instantiations>
+			<ipxact:componentInstantiation>
+				<ipxact:name>sc_implementation</ipxact:name>
+				<ipxact:language>SystemC</ipxact:language>
+				<ipxact:moduleName>iconnect</ipxact:moduleName>
+				<ipxact:moduleParameters>
+					<ipxact:moduleParameter dataType="int" parameterId="uuid_39703ec3_c3d6_4121_88d9_dbc71fdc24a6" usageType="typed">
+						<ipxact:name>N_INITIATORS</ipxact:name>
+						<ipxact:value>N_INITIATORS</ipxact:value>
+					</ipxact:moduleParameter>
+					<ipxact:moduleParameter dataType="int" parameterId="uuid_bd94d335_3698_4b46_9b19_a79793ba0578" usageType="typed">
+						<ipxact:name>N_TARGETS</ipxact:name>
+						<ipxact:value>N_TARGETS</ipxact:value>
+					</ipxact:moduleParameter>
+				</ipxact:moduleParameters>
+				<ipxact:fileSetRef>
+					<ipxact:localName>sc_fileset</ipxact:localName>
+				</ipxact:fileSetRef>
+			</ipxact:componentInstantiation>
+		</ipxact:instantiations>
+		<ipxact:ports>
+			<ipxact:port>
+				<ipxact:name>t_sk_0</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_target_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>t_sk_1</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_target_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>t_sk_2</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_target_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>i_sk_0</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_initiator_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>i_sk_1</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_initiator_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>i_sk_2</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_initiator_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+			<ipxact:port>
+				<ipxact:name>i_sk_3</ipxact:name>
+				<ipxact:transactional>
+					<ipxact:initiative>provides</ipxact:initiative>
+					<ipxact:transTypeDefs>
+						<ipxact:transTypeDef>
+							<ipxact:typeName>tlm_utils::simple_initiator_socket_tagged*[]</ipxact:typeName>
+						</ipxact:transTypeDef>
+					</ipxact:transTypeDefs>
+				</ipxact:transactional>
+			</ipxact:port>
+		</ipxact:ports>
+	</ipxact:model>
+	<ipxact:fileSets>
+		<ipxact:fileSet>
+			<ipxact:name>sc_fileset</ipxact:name>
+			<ipxact:file>
+				<ipxact:name>../../../../../../iconnect.h</ipxact:name>
+				<ipxact:fileType>systemCSource</ipxact:fileType>
+				<ipxact:isIncludeFile>true</ipxact:isIncludeFile>
+			</ipxact:file>
+		</ipxact:fileSet>
+	</ipxact:fileSets>
+	<ipxact:parameters>
+		<ipxact:parameter parameterId="N_INITIATORS" resolve="user" type="int">
+			<ipxact:name>N_INITIATORS</ipxact:name>
+			<ipxact:value>3</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="N_TARGETS" resolve="user" type="int">
+			<ipxact:name>N_TARGETS</ipxact:name>
+			<ipxact:value>4</ipxact:value>
+		</ipxact:parameter>
+	</ipxact:parameters>
+</ipxact:component>

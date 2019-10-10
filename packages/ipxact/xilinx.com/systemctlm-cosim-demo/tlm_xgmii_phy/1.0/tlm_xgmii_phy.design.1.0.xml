@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+// Copyright (c) 2019 Xilinx Inc.
+// Written by Francisco Iglesias.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+-->
+<ipxact:design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xmlns:kactus2="http://kactus2.cs.tut.fi" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
+	<ipxact:vendor>xilinx.com</ipxact:vendor>
+	<ipxact:library>systemctlm-cosim-demo</ipxact:library>
+	<ipxact:name>tlm_xgmii_phy.design</ipxact:name>
+	<ipxact:version>1.0</ipxact:version>
+	<ipxact:componentInstances>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>tx</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="xgmii2tlm_bridge" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{c8d281c0-ad5e-4bfe-a5fc-f3f137a7757f}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="tlm_init" x="110" y="120"/>
+					<kactus2:portPosition busRef="xgmii_slave" x="-110" y="170"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="90"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="370" y="270"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+		<ipxact:componentInstance>
+			<ipxact:instanceName>rx</ipxact:instanceName>
+			<ipxact:componentRef vendor="xilinx.com" library="libsystemctlm-soc" name="tlm2xgmii_bridge" version="1.0"/>
+			<ipxact:vendorExtensions>
+				<kactus2:uuid>{41ce6089-8e03-4dbe-8c36-06d8ab355fd1}</kactus2:uuid>
+				<kactus2:portPositions>
+					<kactus2:portPosition busRef="tlm_target" x="-110" y="160"/>
+					<kactus2:portPosition busRef="xgmii_master" x="110" y="100"/>
+				</kactus2:portPositions>
+				<kactus2:adHocVisibilities>
+					<kactus2:adHocVisible portName="clk" x="-110" y="70"/>
+				</kactus2:adHocVisibilities>
+				<kactus2:position x="370" y="60"/>
+			</ipxact:vendorExtensions>
+		</ipxact:componentInstance>
+	</ipxact:componentInstances>
+	<ipxact:interconnections>
+		<ipxact:interconnection>
+			<ipxact:name>rx_tlm_target_to_tlm_target</ipxact:name>
+			<ipxact:activeInterface componentRef="rx" busRef="tlm_target"/>
+			<ipxact:hierInterface busRef="tlm_target"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tx_xgmii_slave_to_xgmii_slave</ipxact:name>
+			<ipxact:activeInterface componentRef="tx" busRef="xgmii_slave"/>
+			<ipxact:hierInterface busRef="xgmii_slave"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>rx_xgmii_master_to_xgmii_master</ipxact:name>
+			<ipxact:activeInterface componentRef="rx" busRef="xgmii_master"/>
+			<ipxact:hierInterface busRef="xgmii_master"/>
+		</ipxact:interconnection>
+		<ipxact:interconnection>
+			<ipxact:name>tx_tlm_init_to_tlm_init</ipxact:name>
+			<ipxact:activeInterface componentRef="tx" busRef="tlm_init"/>
+			<ipxact:hierInterface busRef="tlm_init"/>
+		</ipxact:interconnection>
+	</ipxact:interconnections>
+	<ipxact:adHocConnections>
+		<ipxact:adHocConnection>
+			<ipxact:name>rx_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="rx" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+		<ipxact:adHocConnection>
+			<ipxact:name>tx_clk_to_clk</ipxact:name>
+			<ipxact:portReferences>
+				<ipxact:internalPortReference componentRef="tx" portRef="clk"/>
+				<ipxact:externalPortReference portRef="clk"/>
+			</ipxact:portReferences>
+		</ipxact:adHocConnection>
+	</ipxact:adHocConnections>
+	<ipxact:vendorExtensions>
+		<kactus2:columnLayout>
+			<kactus2:column name="IO" contentType="0" allowedItems="1" minWidth="119" width="179" x="0"/>
+			<kactus2:column name="Buses" contentType="1" allowedItems="12" minWidth="319" width="379" x="180"/>
+			<kactus2:column name="IO" contentType="0" allowedItems="1" minWidth="119" width="119" x="560"/>
+		</kactus2:columnLayout>
+		<kactus2:routes>
+			<kactus2:route kactus2:connRef="rx_clk_to_clk" kactus2:offPage="false">
+				<kactus2:position x="90" y="70"/>
+				<kactus2:position x="240" y="70"/>
+				<kactus2:position x="240" y="130"/>
+				<kactus2:position x="260" y="130"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tx_clk_to_clk" kactus2:offPage="false">
+				<kactus2:position x="90" y="70"/>
+				<kactus2:position x="240" y="70"/>
+				<kactus2:position x="240" y="360"/>
+				<kactus2:position x="260" y="360"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="rx_tlm_target_to_tlm_target" kactus2:offPage="false">
+				<kactus2:position x="260" y="220"/>
+				<kactus2:position x="90" y="220"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tx_xgmii_slave_to_xgmii_slave" kactus2:offPage="false">
+				<kactus2:position x="260" y="440"/>
+				<kactus2:position x="90" y="440"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="rx_xgmii_master_to_xgmii_master" kactus2:offPage="false">
+				<kactus2:position x="480" y="160"/>
+				<kactus2:position x="620" y="160"/>
+			</kactus2:route>
+			<kactus2:route kactus2:connRef="tx_tlm_init_to_tlm_init" kactus2:offPage="false">
+				<kactus2:position x="480" y="390"/>
+				<kactus2:position x="620" y="390"/>
+			</kactus2:route>
+		</kactus2:routes>
+		<kactus2:adHocVisibilities>
+			<kactus2:adHocVisible portName="clk" x="90" y="70"/>
+		</kactus2:adHocVisibilities>
+		<kactus2:interfaceGraphics>
+			<kactus2:name>tlm_target</kactus2:name>
+			<kactus2:position x="90" y="220"/>
+			<kactus2:direction x="1" y="0"/>
+		</kactus2:interfaceGraphics>
+		<kactus2:interfaceGraphics>
+			<kactus2:name>xgmii_master</kactus2:name>
+			<kactus2:position x="620" y="160"/>
+			<kactus2:direction x="-1" y="0"/>
+		</kactus2:interfaceGraphics>
+		<kactus2:interfaceGraphics>
+			<kactus2:name>tlm_init</kactus2:name>
+			<kactus2:position x="620" y="390"/>
+			<kactus2:direction x="-1" y="0"/>
+		</kactus2:interfaceGraphics>
+		<kactus2:interfaceGraphics>
+			<kactus2:name>xgmii_slave</kactus2:name>
+			<kactus2:position x="90" y="440"/>
+			<kactus2:direction x="1" y="0"/>
+		</kactus2:interfaceGraphics>
+	</ipxact:vendorExtensions>
+</ipxact:design>
