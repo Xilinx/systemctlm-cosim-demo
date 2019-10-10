@@ -24,6 +24,8 @@
 
 -include .config.mk
 
+INSTALL ?= install
+
 ifneq "$(VCS_HOME)" ""
 SYSTEMC_INCLUDE ?=$(VCS_HOME)/include/systemc23/
 SYSTEMC_LIBDIR ?= $(VCS_HOME)/linux/lib
@@ -175,6 +177,19 @@ TARGET_ZYNQ_DEMO = zynq_demo
 TARGET_ZYNQMP_DEMO = zynqmp_demo
 TARGET_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo
 
+IPXACT_LIBS = packages/ipxact
+DEMOS_IPXACT_LIB = $(IPXACT_LIBS)/xilinx.com/demos
+ZL_IPXACT_DEMO_DIR = $(DEMOS_IPXACT_LIB)/zynqmp_lmac2_demo/1.0
+ZL_IPXACT_DEMO = $(ZL_IPXACT_DEMO_DIR)/zynqmp_lmac2_demo.1.0.xml
+ZL_IPXACT_DEMO_OUTDIR = zynqmp_lmac2_ipxact_demo
+TARGET_ZYNQMP_LMAC2_IPXACT_DEMO = $(ZL_IPXACT_DEMO_OUTDIR)/sc_sim
+
+PYSIMGEN = $(LIBSOC_PATH)/tools/pysimgen/pysimgen
+PYSIMGEN_ARGS = -p $(ZL_IPXACT_DEMO)
+PYSIMGEN_ARGS += -l $(IPXACT_LIBS) $(LIBSOC_PATH)/$(IPXACT_LIBS)
+PYSIMGEN_ARGS += -o $(ZL_IPXACT_DEMO_OUTDIR)
+PYSIMGEN_ARGS += --build --quiet
+
 TARGETS = $(TARGET_ZYNQ_DEMO) $(TARGET_ZYNQMP_DEMO)
 
 #
@@ -187,6 +202,9 @@ include files-lmac2.mk
 ifneq ($(wildcard $(LM2_DIR)/.),)
 TARGETS += $(TARGET_ZYNQMP_LMAC2_DEMO)
 V_LDLIBS += $(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a
+ifneq ($(wildcard $(PYSIMGEN)),)
+TARGETS += $(TARGET_ZYNQMP_LMAC2_IPXACT_DEMO)
+endif
 endif
 
 all: $(TARGETS)
@@ -243,6 +261,11 @@ $(TARGET_ZYNQMP_DEMO): $(ZYNQMP_OBJS) $(VTOP_LIB) $(VERILATED_O)
 $(TARGET_ZYNQMP_LMAC2_DEMO): $(ZYNQMP_LMAC2_OBJS) $(VTOP_LIB) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
+$(TARGET_ZYNQMP_LMAC2_IPXACT_DEMO):
+	$(INSTALL) -d $(ZL_IPXACT_DEMO_OUTDIR)
+	[ ! -e .config.mk ] || $(INSTALL) .config.mk $(ZL_IPXACT_DEMO_OUTDIR)
+	$(PYSIMGEN) $(PYSIMGEN_ARGS)
+
 endif
 
 $(TARGET_ZYNQ_DEMO): $(ZYNQ_OBJS) $(VTOP_LIB) $(VERILATED_O)
@@ -256,3 +279,4 @@ clean:
 	$(RM) $(ZYNQMP_OBJS) $(ZYNQMP_OBJS:.o=.d)
 	$(RM) $(ZYNQMP_LMAC2_OBJS) $(ZYNQMP_LMAC2_OBJS:.o=.d)
 	$(RM) -r $(VOBJ_DIR) $(CSRC_DIR) *.daidir
+	$(RM) -r $(ZL_IPXACT_DEMO_OUTDIR)
