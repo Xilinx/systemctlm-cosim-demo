@@ -72,3 +72,10 @@ or a baremetal application.
 
 See here for instructions on how to start the PetaLinux QEMU session:
 http://www.wiki.xilinx.com/QEMU+SystemC+and+TLM+CoSimulation
+
+IP-XACT DEMO
+---------------------------------------
+This repository also contains a demo where a QEMU / SystemC co-simulation
+is automatically generated from an IP-XACT description. More information
+about this demo and instructions for how to launch it manually can be
+found inside the 'zynqmp_lmac2_ipxact_demo.txt' file.
