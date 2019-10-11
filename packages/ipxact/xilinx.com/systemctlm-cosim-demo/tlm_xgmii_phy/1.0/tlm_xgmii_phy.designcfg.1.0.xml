@@ -28,11 +28,11 @@
 	<ipxact:version>1.0</ipxact:version>
 	<ipxact:designRef vendor="xilinx.com" library="systemctlm-cosim-demo" name="tlm_xgmii_phy.design" version="1.0"/>
 	<ipxact:viewConfiguration>
-		<ipxact:instanceName>xgmii2tlm_bridge_0</ipxact:instanceName>
+		<ipxact:instanceName>tx</ipxact:instanceName>
 		<ipxact:view viewRef="SystemC"/>
 	</ipxact:viewConfiguration>
 	<ipxact:viewConfiguration>
-		<ipxact:instanceName>tlm2xgmii_bridge_0</ipxact:instanceName>
+		<ipxact:instanceName>rx</ipxact:instanceName>
 		<ipxact:view viewRef="SystemC"/>
 	</ipxact:viewConfiguration>
 </ipxact:designConfiguration>
