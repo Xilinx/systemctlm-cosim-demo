@@ -1,0 +1,116 @@
+ZynqMP LMAC2 IP-XACt DEMO
+-------------------------
+
+The ZynqMP LMAC2 IP-XACT DEMO co-simulates QEMU and SystemC, where QEMU
+emulates the hardened part (PS) of the ZynqMP and SystemC simulates the
+programable logic (PL) side of the system. The sides communicate through
+the remote port protocol [3]. The PL side in this demo contains an
+instance of the Lewiz LMAC CORE2 Ethernet MAC and connects it to the PS
+side through an interconnect and AXIStream DMAs. Also a PHY is
+instantiated on the PL side, the PHY injects traffic coming from QEMU into
+LMAC CORE2 and forwards outgoing traffic from the LMAC CORE2 to QEMU.
+
+To note is that the LMAC CORE2 is a verilog RTL component translated into
+SystemC using a tool named verilator [5] before the final simulator is
+created.
+
+systemctlm-cosim-demo [1] contains the IP-XACT description of the demo.
+This description can be displayed using a graphical EDA tool based on the
+IP-XACT standard, an open source example of an IP-XACT based tool is
+kactus2 [4].
+
+libsystemctlm-soc [2] contains a tool named pysimgen that is able to
+translate IP-XACT descriptions into QEMU / SystemC co-simulations.
+
+A modified version of kactus2 [7] is able to launch libsystemctlm-soc's
+pysimgen and autogenerate the demo co-simulation through a button press.
+
+Requirements for running the demo
+---------------------------------
+
+* A working QEMU / SystemC co-simulation environment (see the README in
+  [1], [2] and [3] for how to install one)
+
+* Verilator
+
+* kactus2, the modified version [7]
+
+* A Linux kernel containing a driver for the Lewiz LMAC CORE2 Ethernet MAC [8]
+
+Steps for translating the demo into a co-simulation using kactus2
+-----------------------------------------------------------------
+
+* Clone the following two git repos:
+
+  1 - git clone https://github.com/Xilinx/libsystemctlm-soc.git
+  2 - git clone https://github.com/Xilinx/systemctlm-cosim-demo.git
+
+* Launch kactus2 (the modified version)
+
+* Klick the button 'Configure Library'
+
+	* Add following two paths by klicking on the plus sign:
+
+		1 /path/to/libsystemctlm-soc/packages/ipxact
+		1 /path/to/systemctlm-cosim-demo/
+
+* Klick on the 'POSH Configuration' button
+
+	* In 'Script File' insert the path to the pysimgen script:
+
+		/path/to/libsystemctlm-soc/tools/pysimgen/pysimgen
+
+* In kactus2 open the ZynqMP LMAC2 demo HW design
+
+	* In the VLNV tree:
+
+		1 Klick on the 'xilinx.com -> demos -> zynqmp_lmac2_demo'
+
+		2 Right klick on the demo version and choose 'Open HW
+		  design'
+
+* Klick on the 'xilinx_zynqmp_0' instance
+
+* In the 'configurable element values' change the value of the following
+  parameters:
+
+	* EMULATOR
+
+		- This is the QEMU binary to use
+
+	* EMULATOR_ARGS
+
+		- This are the command line arguments passed on to QEMU.
+		  This is were configuration of kernel images, dtbs etc is
+		  done. The demo contains an example of this line.
+
+	* SK_DESCR
+
+		- The socket path where the SystemC side and QEMU will
+		  connect to each other (see [3] for information). The
+		  demo contains an example of this line.
+
+* Klick on the POSH simulation button
+
+	* This will autogenerate the SystemC code for the demo including a
+	  QEMU launcher, then build and run it.
+
+Eclipse Mixed HW / SW Debugging Environment
+-------------------------------------------
+
+Using the wave_viewer project [6] it is possible to debug the generated
+and launched demo co-simulation from inside Eclipse. Instructions on how
+to setup an Eclipse Mixed HW / SW Debugging Environment and how to attach
+from inside Eclipse to a running QEMU / SystemC co-simulation can be found
+in [6].
+
+References
+----------
+[1] https://github.com/Xilinx/systemctlm-cosim-demo.git
+[2] https://github.com/Xilinx/libsystemctlm-soc.git
+[3] https://www.xilinx.com/support/documentation/sw_manuals/xilinx2018_2/ug1169-xilinx-qemu.pdf
+[4] https://github.com/kactus2/kactus2dev
+[5] https://www.veripool.org/wiki/verilator
+[6] https://github.com/edgarigl/wave_viewer
+[7] https://github.com/spanou/kactus2dev
+[8] https://github.com/edgarigl/linux/tree/posh-lmac
