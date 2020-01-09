@@ -59,6 +59,10 @@ using namespace std;
 #define NR_MASTERS	3
 #define NR_DEVICES	4
 
+#ifndef BASE_ADDR
+#define BASE_ADDR	0xa0000000ULL
+#endif
+
 SC_MODULE(Top)
 {
 	SC_HAS_PROCESS(Top);
@@ -177,12 +181,12 @@ SC_MODULE(Top)
 		bus   = new iconnect<NR_MASTERS, NR_DEVICES> ("bus");
 
 		tlm2apb_lmac = new tlm2apb_bridge<bool, sc_bv, 16, sc_bv, 32> ("tlm2apb-lmac-bridge");
-		bus->memmap(0xa0030000ULL, 0x4000 - 1,
+		bus->memmap(BASE_ADDR + 0x30000ULL, 0x4000 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2apb_lmac->tgt_socket);
 
-		bus->memmap(0xa0034000ULL, 0x100 - 1,
+		bus->memmap(BASE_ADDR + 0x34000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, dma_mm2s_A.tgt_socket);
-		bus->memmap(0xa0035000ULL, 0x100 - 1,
+		bus->memmap(BASE_ADDR + 0x35000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, dma_s2mm_C.tgt_socket);
 
 		bus->memmap(0x0LL, 0xffffffff - 1,
