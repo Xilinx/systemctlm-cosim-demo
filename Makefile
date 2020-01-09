@@ -64,6 +64,8 @@ endif
 CPPFLAGS += -I .
 LDFLAGS  += -L $(SYSTEMC_LIBDIR)
 LDLIBS   += -pthread -lsystemc
+LDLIBS_SYSTEMC ?= -lsystemc
+LDLIBS += $(LDLIBS_SYSTEMC)
 
 ZYNQ_TOP_C = zynq_demo.cc
 ZYNQ_TOP_O = $(ZYNQ_TOP_C:.cc=.o)
