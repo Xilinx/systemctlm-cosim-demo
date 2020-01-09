@@ -45,6 +45,9 @@ using namespace std;
 #include "xilinx-axidma.h"
 #include "xilinx-zynqmp.h"
 
+#include "tlm-bridges/tlm2vfio-bridge.h"
+#include "rtl-bridges/pcie-host/axi/tlm/tlm2axi-hw-bridge.h"
+
 #include "tlm-bridges/tlm2apb-bridge.h"
 #include "tlm-bridges/tlm2axis-bridge.h"
 #include "tlm-bridges/axis2tlm-bridge.h"
@@ -57,7 +60,7 @@ using namespace std;
 #endif
 
 #define NR_MASTERS	3
-#define NR_DEVICES	4
+#define NR_DEVICES	5
 
 #ifndef BASE_ADDR
 #define BASE_ADDR	0xa0000000ULL
@@ -74,6 +77,10 @@ SC_MODULE(Top)
 
 	tlm2axis_bridge<256> tlm2axis;
 	axis2tlm_bridge<256> axis2tlm;
+
+        tlm2axi_hw_bridge tlm_hw_bridge;
+        vfio_dev vdev;
+        tlm2vfio_bridge tlm2vfio;
 
 	sc_signal<bool> rst, rst_n;
 
@@ -124,12 +131,18 @@ SC_MODULE(Top)
 		rst_n.write(!rst.read());
 	}
 
-	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
+	Top(sc_module_name name, const char *sk_descr, sc_time quantum,
+			const char *devname, int iommu_group) :
 		zynq("zynq", sk_descr, remoteport_tlm_sync_untimed_ptr, false),
 		dma_mm2s_A("dma_mm2s_A"),
 		dma_s2mm_C("dma_s2mm_C"),
 		tlm2axis("tlm2axis"),
 		axis2tlm("axis2tlm"),
+
+                tlm_hw_bridge("tlm-hw-bridge", 0x00000000, 0xB0000000),
+                vdev(devname, iommu_group),
+                tlm2vfio("tlm2vfio-bridge", 1, vdev, 0),
+
 		rst("rst"),
 		rst_n("rst_n"),
 
@@ -188,6 +201,9 @@ SC_MODULE(Top)
 				ADDRMODE_RELATIVE, -1, dma_mm2s_A.tgt_socket);
 		bus->memmap(BASE_ADDR + 0x35000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, dma_s2mm_C.tgt_socket);
+
+		bus->memmap(BASE_ADDR + 0x36000ULL, 0x4000 - 1,
+				ADDRMODE_RELATIVE, -1, tlm_hw_bridge.tgt_socket);
 
 		bus->memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
@@ -270,6 +286,10 @@ SC_MODULE(Top)
 		tlm2apb_lmac->prdata(apbsig_lmac_prdata);
 		tlm2apb_lmac->pready(apbsig_lmac_pready);
 
+
+		// Wire up the clock and reset signals.
+		tlm_hw_bridge.rst(rst);
+
 		zynq.tie_off();
 	}
 
@@ -300,7 +320,8 @@ int sc_main(int argc, char* argv[])
 
 	sc_set_time_resolution(1, SC_PS);
 
-	top = new Top("top", argv[1], sc_time((double) sync_quantum, SC_NS));
+	top = new Top("top", argv[1], sc_time((double) sync_quantum, SC_NS),
+			"0000:17:00.0", 26);
 
 	if (argc < 3) {
 		sc_start(1, SC_PS);
