@@ -71,10 +71,16 @@ ZYNQMP_TOP_C = zynqmp_demo.cc
 ZYNQMP_TOP_O = $(ZYNQMP_TOP_C:.cc=.o)
 ZYNQMP_LMAC2_TOP_C = zynqmp_lmac2_demo.cc
 ZYNQMP_LMAC2_TOP_O = $(ZYNQMP_LMAC2_TOP_C:.cc=.o)
+RISCV_VIRT_LMAC2_TOP_C = riscv_virt_lmac2_demo.cc
+RISCV_VIRT_LMAC2_TOP_O = $(RISCV_VIRT_LMAC2_TOP_C:.cc=.o)
+RISCV_VIRT_LMAC3_TOP_C = riscv_virt_lmac3_demo.cc
+RISCV_VIRT_LMAC3_TOP_O = $(RISCV_VIRT_LMAC3_TOP_C:.cc=.o)
 
 ZYNQ_OBJS += $(ZYNQ_TOP_O)
 ZYNQMP_OBJS += $(ZYNQMP_TOP_O)
 ZYNQMP_LMAC2_OBJS += $(ZYNQMP_LMAC2_TOP_O)
+RISCV_VIRT_LMAC2_OBJS += $(RISCV_VIRT_LMAC2_TOP_O)
+RISCV_VIRT_LMAC3_OBJS += $(RISCV_VIRT_LMAC3_TOP_O)
 
 # Uncomment to enable use of scml2
 # CPPFLAGS += -I $(SCML_INCLUDE)
@@ -173,10 +179,14 @@ OBJS = $(C_OBJS) $(SC_OBJS)
 ZYNQ_OBJS += $(OBJS)
 ZYNQMP_OBJS += $(OBJS)
 ZYNQMP_LMAC2_OBJS += $(OBJS)
+RISCV_VIRT_LMAC2_OBJS += $(OBJS)
+RISCV_VIRT_LMAC3_OBJS += $(OBJS)
 
 TARGET_ZYNQ_DEMO = zynq_demo
 TARGET_ZYNQMP_DEMO = zynqmp_demo
 TARGET_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo
+TARGET_RISCV_VIRT_LMAC2_DEMO = riscv_virt_lmac2_demo
+TARGET_RISCV_VIRT_LMAC3_DEMO = riscv_virt_lmac3_demo
 
 IPXACT_LIBS = packages/ipxact
 DEMOS_IPXACT_LIB = $(IPXACT_LIBS)/xilinx.com/demos
@@ -202,10 +212,23 @@ LM_CORE = lmac_wrapper_top.v
 include files-lmac2.mk
 ifneq ($(wildcard $(LM2_DIR)/.),)
 TARGETS += $(TARGET_ZYNQMP_LMAC2_DEMO)
+TARGETS += $(TARGET_RISCV_VIRT_LMAC2_DEMO)
 V_LDLIBS += $(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a
 ifneq ($(wildcard $(PYSIMGEN)),)
 TARGETS += $(TARGET_ZYNQMP_LMAC2_IPXACT_DEMO)
 endif
+endif
+
+#
+# LMAC3
+#
+LM3_DIR=LMAC_CORE3/LMAC3_INFO/
+
+LM3_CORE = lmac3_wrapper_top.v
+include files-lmac3.mk
+ifneq ($(wildcard $(LM3_DIR)/.),)
+TARGETS += $(TARGET_RISCV_VIRT_LMAC3_DEMO)
+V_LDLIBS += $(VOBJ_DIR)/Vlmac3_wrapper_top__ALL.a
 endif
 
 all: $(TARGETS)
@@ -213,6 +236,8 @@ all: $(TARGETS)
 -include $(ZYNQ_OBJS:.o=.d)
 -include $(ZYNQMP_OBJS:.o=.d)
 -include $(ZYNQMP_LMAC2_OBJS:.o=.d)
+-include $(RISCV_VIRT_LMAC2_OBJS:.o=.d)
+-include $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 CFLAGS += -MMD
 CXXFLAGS += -MMD
 
@@ -223,7 +248,12 @@ $(VOBJ_DIR)/Vlmac_wrapper_top__ALL.a: $(LM_CORE)
 	$(VENV) $(VERILATOR) $(VFLAGS) $^
 	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f Vlmac_wrapper_top.mk
 
+$(VOBJ_DIR)/Vlmac3_wrapper_top__ALL.a: $(LM3_CORE)
+	$(VENV) $(VERILATOR) $(VFLAGS) $^
+	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f Vlmac3_wrapper_top.mk
+
 $(ZYNQMP_LMAC2_TOP_O): $(V_LDLIBS)
+$(RISCV_VIRT_LMAC2_TOP_O): $(V_LDLIBS)
 $(ZYNQMP_TOP_O): $(V_LDLIBS)
 $(VERILATED_O): $(V_LDLIBS)
 
@@ -266,6 +296,12 @@ $(TARGET_ZYNQMP_LMAC2_IPXACT_DEMO):
 	$(INSTALL) -d $(ZL_IPXACT_DEMO_OUTDIR)
 	[ ! -e .config.mk ] || $(INSTALL) .config.mk $(ZL_IPXACT_DEMO_OUTDIR)
 	$(PYSIMGEN) $(PYSIMGEN_ARGS)
+
+$(TARGET_RISCV_VIRT_LMAC2_DEMO): $(RISCV_VIRT_LMAC2_OBJS) $(VTOP_LIB) $(VERILATED_O)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+$(TARGET_RISCV_VIRT_LMAC3_DEMO): $(RISCV_VIRT_LMAC3_OBJS) $(VTOP_LIB) $(VERILATED_O)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 endif
 
