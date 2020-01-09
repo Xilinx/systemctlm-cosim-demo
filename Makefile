@@ -126,6 +126,7 @@ VERILATED_O=$(VOBJ_DIR)/verilated.o
 
 # Gives some compatibility with vcs
 VFLAGS += --pins-bv 2 -Wno-fatal
+VFLAGS += --output-split-cfuncs 500
 
 VFLAGS+=--sc --Mdir $(VOBJ_DIR)
 VFLAGS += -CFLAGS "-DHAVE_VERILOG" -CFLAGS "-DHAVE_VERILOG_VERILATOR"
