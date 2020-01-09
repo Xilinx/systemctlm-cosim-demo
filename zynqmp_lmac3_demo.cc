@@ -294,6 +294,7 @@ SC_MODULE(Top)
 		tlm_hw_bridge.irq(irq);
 		tlm2vfio.irq(irq);
 
+		tlm_hw_bridge.bridge_socket(tlm2vfio.tgt_socket[0]);
 		zynq.tie_off();
 	}
 
