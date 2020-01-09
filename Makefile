@@ -63,7 +63,7 @@ endif
 
 CPPFLAGS += -I .
 LDFLAGS  += -L $(SYSTEMC_LIBDIR)
-LDLIBS   += -pthread -lsystemc
+LDLIBS   += -pthread
 LDLIBS_SYSTEMC ?= -lsystemc
 LDLIBS += $(LDLIBS_SYSTEMC)
 
