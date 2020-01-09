@@ -83,6 +83,7 @@ SC_MODULE(Top)
         tlm2vfio_bridge tlm2vfio;
 
 	sc_signal<bool> rst, rst_n;
+	sc_signal<bool> irq;
 
 	sc_clock *clk;
 
@@ -145,6 +146,7 @@ SC_MODULE(Top)
 
 		rst("rst"),
 		rst_n("rst_n"),
+		irq("irq"),
 
 		phy("phy"),
 		phy_txd("phy_txd"),
@@ -289,6 +291,8 @@ SC_MODULE(Top)
 
 		// Wire up the clock and reset signals.
 		tlm_hw_bridge.rst(rst);
+		tlm_hw_bridge.irq(irq);
+		tlm2vfio.irq(irq);
 
 		zynq.tie_off();
 	}
