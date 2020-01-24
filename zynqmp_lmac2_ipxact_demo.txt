@@ -3,7 +3,7 @@ ZynqMP LMAC2 IP-XACt DEMO
 
 The ZynqMP LMAC2 IP-XACT DEMO co-simulates QEMU and SystemC, where QEMU
 emulates the hardened part (PS) of the ZynqMP and SystemC simulates the
-programable logic (PL) side of the system. The sides communicate through
+programmable logic (PL) side of the system. The sides communicate through
 the remote port protocol [3]. The PL side in this demo contains an
 instance of the Lewiz LMAC CORE2 Ethernet MAC and connects it to the PS
 side through an interconnect and AXIStream DMAs. Also a PHY is
@@ -47,14 +47,14 @@ Steps for translating the demo into a co-simulation using kactus2
 
 * Launch kactus2 (the modified version)
 
-* Klick the button 'Configure Library'
+* Click the button 'Configure Library'
 
-	* Add following two paths by klicking on the plus sign:
+	* Add following two paths by clicking on the plus sign:
 
 		1 /path/to/libsystemctlm-soc/packages/ipxact
 		1 /path/to/systemctlm-cosim-demo/
 
-* Klick on the 'POSH Configuration' button
+* Click on the 'POSH Configuration' button
 
 	* In 'Script File' insert the path to the pysimgen script:
 
@@ -64,12 +64,12 @@ Steps for translating the demo into a co-simulation using kactus2
 
 	* In the VLNV tree:
 
-		1 Klick on the 'xilinx.com -> demos -> zynqmp_lmac2_demo'
+		1 Click on the 'xilinx.com -> demos -> zynqmp_lmac2_demo'
 
-		2 Right klick on the demo version and choose 'Open HW
+		2 Right click on the demo version and choose 'Open HW
 		  design'
 
-* Klick on the 'xilinx_zynqmp_0' instance
+* Click on the 'xilinx_zynqmp_0' instance
 
 * In the 'configurable element values' change the value of the following
   parameters:
@@ -90,7 +90,7 @@ Steps for translating the demo into a co-simulation using kactus2
 		  connect to each other (see [3] for information). The
 		  demo contains an example of this line.
 
-* Klick on the POSH simulation button
+* Click on the POSH simulation button
 
 	* This will autogenerate the SystemC code for the demo including a
 	  QEMU launcher, then build and run it.
