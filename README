@@ -6,7 +6,7 @@ instance, a demo/debug-device, a small DMA and if verilator is available
 a timer. Note that the remote-port instance connecting to QEMU
 can serve multiple QEMU instances. In fact, this demo can run
 connected to the ZynqMP platform with 2 external QEMU instances
-(APU/RPU and PMU). All of these intances can access the
+(APU/RPU and PMU). All of these instances can access the
 TLM world.
 
 The demo/debug-device is used to read out System-C time, output
@@ -23,19 +23,19 @@ was written in System-C.
 
 BUILD
 ---------------------------------------
-Before buidling you will need to ensure that you have SystemC and SCML
-avaliable.
+Before building you will need to ensure that you have SystemC and SCML
+available.
 
 The demo was prepared assuming the following versions:
     SystemC: 2.3.1
 
-The Makefile assumes that both are installed in the direcotries below:
+The Makefile assumes that both are installed in the directories below:
     SystemC: /usr/local/systemc-2.3.1/
 
 If you have them installed in different directories point the Makefile to the
 correct directory by setting the variables SYSTEMC.
 
-You will also need to clone the libremote-port submode, by running:
+You will also need to clone the libremote-port submodule, by running:
     $ git submodule update --init libsystemctlm-soc
 
 Once everything is installed you can just run make. If SystemC is in
