@@ -68,10 +68,10 @@ using namespace std;
 SC_MODULE(Top)
 {
 	SC_HAS_PROCESS(Top);
-	iconnect<NR_MASTERS, NR_DEVICES>	*bus;
+	iconnect<NR_MASTERS, NR_DEVICES> bus;
 	xilinx_zynqmp zynq;
 	memory mem;
-	debugdev *debug;
+	debugdev debug;
 	demodma *dma[NR_DEMODMA];
 
 	sc_signal<bool> rst, rst_n;
@@ -202,8 +202,10 @@ SC_MODULE(Top)
 	}
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
+		bus("bus"),
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
+		debug("debug"),
 		rst("rst"),
 		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
@@ -306,9 +308,6 @@ SC_MODULE(Top)
 
 		zynq.rst(rst);
 
-		bus   = new iconnect<NR_MASTERS, NR_DEVICES> ("bus");
-		debug = new debugdev("debug");
-
 		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
 			char name[16];
 
@@ -316,45 +315,45 @@ SC_MODULE(Top)
 			dma[i] = new demodma(name);
 		}
 
-		bus->memmap(0xa0000000ULL, 0x100 - 1,
-				ADDRMODE_RELATIVE, -1, debug->socket);
+		bus.memmap(0xa0000000ULL, 0x100 - 1,
+				ADDRMODE_RELATIVE, -1, debug.socket);
 
 		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
-			bus->memmap(0xa0010000ULL + 0x100 * i, 0x10 - 1,
+			bus.memmap(0xa0010000ULL + 0x100 * i, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, dma[i]->tgt_socket);
 		}
 
 		tlm2apb_tmr = new tlm2apb_bridge<bool, sc_bv, 16, sc_bv, 32> ("tlm2apb-tmr-bridge");
-		bus->memmap(0xa0020000ULL, 0x10 - 1,
+		bus.memmap(0xa0020000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2apb_tmr->tgt_socket);
 
 #ifdef HAVE_VERILOG
 		tlm2axi_al = new tlm2axilite_bridge<4, 32> ("tlm2axi-al-bridge");
 		tlm2axi_af = new tlm2axi_bridge<10, AXIFULL_DATA_WIDTH> ("tlm2axi-af-bridge");
-		bus->memmap(0xa0450000ULL, 0x10 - 1,
+		bus.memmap(0xa0450000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2axi_al->tgt_socket);
-		bus->memmap(0xa0460000ULL, 0x400 - 1,
+		bus.memmap(0xa0460000ULL, 0x400 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2axi_af->tgt_socket);
 #else
-		bus->memmap(0xa0450000ULL, 0x10 - 1,
+		bus.memmap(0xa0450000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, mem_al.socket);
-		bus->memmap(0xa0460000ULL, 0x400 - 1,
+		bus.memmap(0xa0460000ULL, 0x400 - 1,
 				ADDRMODE_RELATIVE, -1, mem_af.socket);
 #endif
-		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
+		bus.memmap(0xa0800000ULL, 64 * 1024 - 1,
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
-		bus->memmap(0x0LL, 0xffffffff - 1,
+		bus.memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
 
-		zynq.s_axi_hpm_fpd[0]->bind(*(bus->t_sk[0]));
+		zynq.s_axi_hpm_fpd[0]->bind(*(bus.t_sk[0]));
 
 		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
-			dma[i]->init_socket.bind(*(bus->t_sk[1 + i]));
+			dma[i]->init_socket.bind(*(bus.t_sk[1 + i]));
 			dma[i]->irq(zynq.pl2ps_irq[1 + i]);
 		}
 
-		debug->irq(zynq.pl2ps_irq[0]);
+		debug.irq(zynq.pl2ps_irq[0]);
 
 #ifdef HAVE_VERILOG
 		/* Slow clock to keep simulation fast.  */
