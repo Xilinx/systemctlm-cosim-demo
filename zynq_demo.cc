@@ -54,6 +54,14 @@ SC_MODULE(Top)
 	debugdev *debug;
 	sc_signal<bool> rst;
 
+	SC_HAS_PROCESS(Top);
+
+	void pull_reset(void) {
+		/* Pull the reset signal.  */
+		rst.write(true);
+		wait(1, SC_US);
+		rst.write(false);
+	}
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
 		zynq("zynq", sk_descr),
@@ -76,6 +84,8 @@ SC_MODULE(Top)
 
 		/* Tie off any remaining unconnected signals.  */
 		zynq.tie_off();
+
+		SC_THREAD(pull_reset);
 	}
 
 private:
@@ -112,11 +122,6 @@ int sc_main(int argc, char* argv[])
 
 	trace_fp = sc_create_vcd_trace_file("trace");
 	trace(trace_fp, *top, top->name());
-
-	/* Pull the reset signal.  */
-	top->rst.write(true);
-	sc_start(1, SC_US);
-	top->rst.write(false);
 
 	sc_start();
 	if (trace_fp) {
