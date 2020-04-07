@@ -180,6 +180,13 @@ SC_MODULE(Top)
 	sc_signal<sc_bv<AXIFULL_ID_WIDTH> > af_rid;
 	sc_signal<bool> af_rlast;
 
+	void pull_reset(void) {
+		/* Pull the reset signal.  */
+		rst.write(true);
+		wait(1, SC_US);
+		rst.write(false);
+	}
+
 	void gen_rst_n(void)
 	{
 		rst_n.write(!rst.read());
@@ -574,6 +581,8 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pready(apbsig_timer_pready);
 
 		zynq.tie_off();
+
+		SC_THREAD(pull_reset);
 	}
 
 private:
@@ -614,10 +623,6 @@ int sc_main(int argc, char* argv[])
 
 	trace_fp = sc_create_vcd_trace_file("trace");
 	trace(trace_fp, *top, top->name());
-	/* Pull the reset signal.  */
-	top->rst.write(true);
-	sc_start(1, SC_US);
-	top->rst.write(false);
 
 	sc_start();
 	if (trace_fp) {
