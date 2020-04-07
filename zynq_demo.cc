@@ -49,9 +49,9 @@ using namespace std;
 
 SC_MODULE(Top)
 {
-	iconnect<NR_MASTERS, NR_DEVICES>	*bus;
+	iconnect<NR_MASTERS, NR_DEVICES> bus;
 	xilinx_zynq zynq;
-	debugdev *debug;
+	debugdev debug;
 	sc_signal<bool> rst;
 
 	SC_HAS_PROCESS(Top);
@@ -64,23 +64,22 @@ SC_MODULE(Top)
 	}
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
+		bus("bus"),
 		zynq("zynq", sk_descr),
+		debug("debug"),
 		rst("rst")
 	{
 		m_qk.set_global_quantum(quantum);
 
 		zynq.rst(rst);
 
-		bus   = new iconnect<NR_MASTERS, NR_DEVICES> ("bus");
-		debug = new debugdev("debug");
+		bus.memmap(0x40000000ULL, 0x100 - 1,
+				ADDRMODE_RELATIVE, -1, debug.socket);
 
-		bus->memmap(0x40000000ULL, 0x100 - 1,
-				ADDRMODE_RELATIVE, -1, debug->socket);
-
-		zynq.m_axi_gp[0]->bind(*(bus->t_sk[0]));
+		zynq.m_axi_gp[0]->bind(*(bus.t_sk[0]));
 
 		/* Connect the PL irqs to the irq_pl_to_ps wires.  */
-		debug->irq(zynq.pl2ps_irq[0]);
+		debug.irq(zynq.pl2ps_irq[0]);
 
 		/* Tie off any remaining unconnected signals.  */
 		zynq.tie_off();
