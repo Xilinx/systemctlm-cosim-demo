@@ -42,7 +42,7 @@ using namespace std;
 #include "trace.h"
 #include "iconnect.h"
 #include "debugdev.h"
-#include "xilinx-zynq.h"
+#include "soc/xilinx/zynq/xilinx-zynq.h"
 
 #define NR_MASTERS	1
 #define NR_DEVICES	1

@@ -44,7 +44,7 @@ using namespace std;
 #include "memory.h"
 #include "debugdev.h"
 #include "demo-dma.h"
-#include "xilinx-zynqmp.h"
+#include "soc/xilinx/zynqmp/xilinx-zynqmp.h"
 
 #include "checkers/pc-axilite.h"
 #include "tlm-bridges/tlm2axilite-bridge.h"
