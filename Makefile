@@ -203,6 +203,7 @@ PYSIMGEN_ARGS += --build --quiet
 
 TARGETS = $(TARGET_ZYNQ_DEMO) $(TARGET_ZYNQMP_DEMO)
 
+ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
 #
 # LMAC2
 #
@@ -218,7 +219,9 @@ ifneq ($(wildcard $(PYSIMGEN)),)
 TARGETS += $(TARGET_ZYNQMP_LMAC2_IPXACT_DEMO)
 endif
 endif
+endif
 
+ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
 #
 # LMAC3
 #
@@ -229,6 +232,7 @@ include files-lmac3.mk
 ifneq ($(wildcard $(LM3_DIR)/.),)
 TARGETS += $(TARGET_RISCV_VIRT_LMAC3_DEMO)
 V_LDLIBS += $(VOBJ_DIR)/Vlmac3_wrapper_top__ALL.a
+endif
 endif
 
 all: $(TARGETS)
