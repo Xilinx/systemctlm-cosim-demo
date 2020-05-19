@@ -134,7 +134,7 @@ Now, we'll disassemble it back to source:
 dtc -I dtb -O dts -o virt.dts virt.dtb
 ```
 
-And then we'll edit it adding the following at the end of the soc node:
+And then we'll edit it adding the following at the end, inside of the soc node:
 ```
                 lmac2@0x280030000 {
                         compatible = "lewiz,lmac2";
