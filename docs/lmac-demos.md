@@ -94,6 +94,17 @@ When building the Linux kernel, you should use the posh-lmac branch in the follo
 git repo instead:
 https://github.com/edgarigl/linux/tree/posh-lmac
 
+You'll need riscv64 compilers:
+```apt-get install gcc-riscv64-linux-gnu```
+
+Start with a default config:
+```make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- defconfig```
+
+Then follow-up with enabling what ever you need, including the LeWiz LMAC2 driver (CONFIG_LEWIZ_LMAC2):
+```make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- menuconfig```
+
+Build:
+```make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu-```
 
 ### Add LMAC to virt dtb
 
@@ -101,13 +112,13 @@ When running the QEMU RISCV64 virt machine, QEMU will on-the-fly auto-generate a
 for the Guest Linux. We need to use a modified version of this dtb with the LMAC nodes.
 
 First we'll run QEMU and have it dump the generated dtb file.
-We'll need to copy the QEMU command-line from the examples below
-and append the ``-machine dumpdtb=virt.dtb`` option to make QEMU
-dump the DTB.
+We'll need to copy the QEMU command-line from the run examples below
+and remove the ```-dtb virt.dtb``` option and append the ``-machine dumpdtb=virt.dtb``
+option to make QEMU dump the DTB.
 
 Example:
 ```
-qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -dtb virt.dtb -kernel bbl -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -machine dumpdtb=virt.dtb
+qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -bios opensbi-riscv64-virt-fw_jump.bin -kernel Image -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -machine dumpdtb=virt.dtb
 ```
 
 Now, we'll disassemble it back to source:
@@ -140,7 +151,7 @@ You'll need two terminals, one for QEMU and another for the SystemC simulators.
 QEMU:
 ```
 mkdir /tmp/machine-riscv64/
-qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -dtb virt.dtb -kernel bbl -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -netdev user,id=net4 -device remote-port-net,rp-adaptor0=/machine/cosim,rp-chan0=256,rp-chan1=266,netdev=net4  -machine-path /tmp/machine-riscv64
+qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -dtb virt.dtb -bios opensbi-riscv64-virt-fw_jump.bin -kernel Image -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -netdev user,id=net4 -device remote-port-net,rp-adaptor0=/machine/cosim,rp-chan0=256,rp-chan1=266,netdev=net4  -machine-path /tmp/machine-riscv64
 ```
 
 SystemC:
