@@ -100,9 +100,14 @@ https://github.com/edgarigl/linux/tree/posh-lmac
 When running the QEMU RISCV64 virt machine, QEMU will on-the-fly auto-generate a dtb file
 for the Guest Linux. We need to use a modified version of this dtb with the LMAC nodes.
 
-First we'll run QEMU and have it dump the generated dtb file::
+First we'll run QEMU and have it dump the generated dtb file.
+We'll need to copy the QEMU command-line from the examples below
+and append the ``-machine dumpdtb=virt.dtb`` option to make QEMU
+dump the DTB.
+
+Example:
 ```
-qemu-system-riscv64 -M virt-cosim -machine dumpdtb=virt.dtb
+qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -dtb virt.dtb -kernel bbl -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -machine dumpdtb=virt.dtb
 ```
 
 Now, we'll disassemble it back to source:
