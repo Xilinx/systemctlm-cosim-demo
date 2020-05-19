@@ -118,7 +118,15 @@ option to make QEMU dump the DTB.
 
 Example:
 ```
-qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -bios opensbi-riscv64-virt-fw_jump.bin -kernel Image -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -machine dumpdtb=virt.dtb
+qemu-system-riscv64 -M virt-cosim -smp 4 -serial stdio -display none -m 2G	\
+	-bios opensbi-riscv64-virt-fw_jump.bin -kernel Image			\
+	-append "root=/dev/vda ro console=ttyS0"				\
+	-drive file=rootfs.ext2,format=raw,id=hd0				\
+	-device virtio-blk-device,drive=hd0					\
+	-object rng-random,filename=/dev/urandom,id=rng0			\
+	-device virtio-rng-device,rng=rng0					\
+	-device virtio-net-device,netdev=usernet -netdev user,id=usernet	\
+	-machine dumpdtb=virt.dtb
 ```
 
 Now, we'll disassemble it back to source:
@@ -151,7 +159,17 @@ You'll need two terminals, one for QEMU and another for the SystemC simulators.
 QEMU:
 ```
 mkdir /tmp/machine-riscv64/
-qemu-system-riscv64  -M virt-cosim  -smp 4 -serial stdio -display none -m 2G -dtb virt.dtb -bios opensbi-riscv64-virt-fw_jump.bin -kernel Image -append "root=/dev/vda ro console=ttyS0" -drive file=rootfs.ext2,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -device virtio-net-device,netdev=usernet -netdev user,id=usernet -netdev user,id=net4 -device remote-port-net,rp-adaptor0=/machine/cosim,rp-chan0=256,rp-chan1=266,netdev=net4  -machine-path /tmp/machine-riscv64
+qemu-system-riscv64 -M virt-cosim -smp 4 -serial stdio -display none -m 2G	\
+	-dtb virt.dtb -bios opensbi-riscv64-virt-fw_jump.bin -kernel Image	\
+	-append "root=/dev/vda ro console=ttyS0"				\
+	-drive file=rootfs.ext2,format=raw,id=hd0				\
+	-device virtio-blk-device,drive=hd0					\
+	-object rng-random,filename=/dev/urandom,id=rng0			\
+	-device virtio-rng-device,rng=rng0					\
+	-device virtio-net-device,netdev=usernet -netdev user,id=usernet	\
+	-netdev user,id=net4							\
+	-device remote-port-net,rp-adaptor0=/machine/cosim,rp-chan0=256,rp-chan1=266,netdev=net4 \
+	-machine-path /tmp/machine-riscv64
 ```
 
 SystemC:
