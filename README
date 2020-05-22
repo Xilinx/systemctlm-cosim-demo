@@ -27,10 +27,10 @@ Before building you will need to ensure that you have SystemC and SCML
 available.
 
 The demo was prepared assuming the following versions:
-    SystemC: 2.3.1
+    SystemC: 2.3.2
 
 The Makefile assumes that both are installed in the directories below:
-    SystemC: /usr/local/systemc-2.3.1/
+    SystemC: /usr/local/systemc-2.3.2/
 
 If you have them installed in different directories point the Makefile to the
 correct directory by setting the variables SYSTEMC.
@@ -58,11 +58,11 @@ line arguments.
 
 A ZynqMP example:
 In one terminal, in the demo directory
-LD_LIBRARY_PATH=/usr/local/systemc-2.3.1/lib-linux64/ ./zynqmp_demo \
+LD_LIBRARY_PATH=/usr/local/systemc-2.3.2/lib-linux64/ ./zynqmp_demo \
     unix:./qemu-tmp/qemu-rport-_amba@0_cosim@0 10000
 
 A Zynq-7000 example:
-LD_LIBRARY_PATH=/usr/local/systemc-2.3.1/lib-linux64/ ./zynq_demo \
+LD_LIBRARY_PATH=/usr/local/systemc-2.3.2/lib-linux64/ ./zynq_demo \
     unix:./qemu-tmp/qemu-rport-_cosim@0 1000000
 
 In another terminal you will need to start up the PS. In this case we are going
