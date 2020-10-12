@@ -43,7 +43,7 @@ using namespace std;
 #include "iconnect.h"
 #include "memory.h"
 #include "xilinx-axidma.h"
-#include "xilinx-zynqmp.h"
+#include "soc/xilinx/zynqmp/xilinx-zynqmp.h"
 
 #include "tlm-bridges/tlm2apb-bridge.h"
 #include "tlm-bridges/tlm2axis-bridge.h"
