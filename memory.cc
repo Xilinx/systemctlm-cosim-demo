@@ -33,7 +33,7 @@ using namespace std;
 
 #include "memory.h"
 
-memory::memory(sc_module_name name, sc_time latency, int size_)
+memory::memory(sc_module_name name, sc_time latency, off_t size_)
 	: sc_module(name), socket("socket"), LATENCY(latency)
 {
 	socket.register_b_transport(this, &memory::b_transport);

@@ -28,7 +28,7 @@ public:
 
 	const sc_time LATENCY;
 
-	memory(sc_core::sc_module_name name, sc_time latency, int size_);
+	memory(sc_core::sc_module_name name, sc_time latency, off_t size_);
 	virtual void b_transport(tlm::tlm_generic_payload& trans,
 					sc_time& delay);
 	virtual bool get_direct_mem_ptr(tlm::tlm_generic_payload& trans,
@@ -37,5 +37,5 @@ public:
 
 private:
 	uint8_t *mem;
-	int size;
+	off_t size;
 };
