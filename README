@@ -56,6 +56,11 @@ The first argument points to the QEMU machine-path to use. The second argument
 is the icount value to use. The arguments should line up with the QEMU command
 line arguments.
 
+A Versal example:
+In one terminal, in the demo directory
+LD_LIBRARY_PATH=/usr/local/systemc-2.3.2/lib-linux64/ ./versal_demo \
+    unix:/tmp/qemu/qemu-rport-_amba@0_cosim@0 10000
+
 A ZynqMP example:
 In one terminal, in the demo directory
 LD_LIBRARY_PATH=/usr/local/systemc-2.3.2/lib-linux64/ ./zynqmp_demo \
