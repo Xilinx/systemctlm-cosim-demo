@@ -27,7 +27,7 @@
 INSTALL ?= install
 
 ifneq "$(VCS_HOME)" ""
-SYSTEMC_INCLUDE ?=$(VCS_HOME)/include/systemc23/
+SYSTEMC_INCLUDE ?=$(VCS_HOME)/include/systemc232/
 SYSTEMC_LIBDIR ?= $(VCS_HOME)/linux/lib
 TLM2 ?= $(VCS_HOME)/etc/systemc/tlm/
 
@@ -35,7 +35,7 @@ HAVE_VERILOG=y
 HAVE_VERILOG_VERILATOR?=n
 HAVE_VERILOG_VCS=y
 else
-SYSTEMC ?= /usr/local/systemc-2.3.1/
+SYSTEMC ?= /usr/local/systemc-2.3.2/
 SYSTEMC_INCLUDE ?=$(SYSTEMC)/include/
 SYSTEMC_LIBDIR ?= $(SYSTEMC)/lib-linux64
 # In case your TLM-2.0 installation is not bundled with
