@@ -76,7 +76,7 @@ SystemC side. You could also start up your own kernel with the required drivers
 or a baremetal application.
 
 See here for instructions on how to start the PetaLinux QEMU session:
-http://www.wiki.xilinx.com/QEMU+SystemC+and+TLM+CoSimulation
+http://www.wiki.xilinx.com/Co-simulation
 
 IP-XACT DEMO
 ---------------------------------------
