@@ -61,6 +61,7 @@ axidma::axidma(sc_module_name name, bool use_memcpy)
 	  use_memcpy(use_memcpy)
 {
 	tgt_socket.register_b_transport(this, &axidma::b_transport);
+	memset(&regs, 0, sizeof regs);
 
 	SC_METHOD(update_irqs);
 	dont_initialize();
