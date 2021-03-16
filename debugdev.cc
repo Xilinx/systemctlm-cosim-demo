@@ -62,6 +62,7 @@ void debugdev::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 		trans.set_response_status(tlm::TLM_BURST_ERROR_RESPONSE);
 		return;
 	}
+	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 
 	// Pretend this is slow!
 	delay += sc_time(1, SC_US);
@@ -80,6 +81,14 @@ void debugdev::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 				break;
 			case 0x10:
 				v = clock();
+				break;
+			case 0xf0:
+				trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
+				break;
+			case 0xf4:
+				trans.set_response_status(tlm::TLM_GENERIC_ERROR_RESPONSE);
+				break;
+			default:
 				break;
 		}
 		memcpy(data, &v, len);
@@ -107,11 +116,18 @@ void debugdev::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 			case 0xc:
 				irq.write(data[0] & 1);
 				break;
+			case 0xf0:
+				trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
+				break;
+			case 0xf4:
+				trans.set_response_status(tlm::TLM_GENERIC_ERROR_RESPONSE);
+				break;
+			default:
+				break;
 		}
 		old_ts = now;
 	}
 
-	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
 unsigned int debugdev::transport_dbg(tlm::tlm_generic_payload& trans)
