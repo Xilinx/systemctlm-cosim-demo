@@ -319,7 +319,7 @@ SC_MODULE(Top)
 				ADDRMODE_RELATIVE, -1, debug.socket);
 
 		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
-			bus.memmap(0xa0010000ULL + 0x100 * i, 0x10 - 1,
+			bus.memmap(0xa0010000ULL + 0x100 * i, 0x18 - 1,
 				ADDRMODE_RELATIVE, -1, dma[i]->tgt_socket);
 		}
 
