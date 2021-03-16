@@ -99,11 +99,11 @@ SC_OBJS += xilinx-axidma.o
 LIBSOC_PATH=libsystemctlm-soc
 CPPFLAGS += -I $(LIBSOC_PATH)
 
-LIBSOC_ZYNQ_PATH=$(LIBSOC_PATH)/zynq
+LIBSOC_ZYNQ_PATH=$(LIBSOC_PATH)/soc/xilinx/zynq
 SC_OBJS += $(LIBSOC_ZYNQ_PATH)/xilinx-zynq.o
 CPPFLAGS += -I $(LIBSOC_ZYNQ_PATH)
 
-LIBSOC_ZYNQMP_PATH=$(LIBSOC_PATH)/zynqmp
+LIBSOC_ZYNQMP_PATH=$(LIBSOC_PATH)/soc/xilinx/zynqmp
 SC_OBJS += $(LIBSOC_ZYNQMP_PATH)/xilinx-zynqmp.o
 CPPFLAGS += -I $(LIBSOC_ZYNQMP_PATH)
 
