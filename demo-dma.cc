@@ -67,8 +67,19 @@ void demodma::do_dma_trans(tlm::tlm_command cmd, unsigned char *buf,
 	}
 
 	init_socket->b_transport(tr, delay);
-	if (tr.get_response_status() != tlm::TLM_OK_RESPONSE) {
+
+	switch (tr.get_response_status()) {
+	case tlm::TLM_OK_RESPONSE:
+		regs.error_resp = DEMODMA_RESP_OKAY;
+		break;
+	case tlm::TLM_ADDRESS_ERROR_RESPONSE:
 		printf("%s:%d DMA transaction error!\n", __func__, __LINE__);
+		regs.error_resp = DEMODMA_RESP_ADDR_DECODE_ERROR;
+		break;
+	default:
+		printf("%s:%d DMA transaction error!\n", __func__, __LINE__);
+		regs.error_resp = DEMODMA_RESP_BUS_GENERIC_ERROR;
+		break;
 	}
 }
 

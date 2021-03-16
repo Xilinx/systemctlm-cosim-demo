@@ -26,6 +26,12 @@ enum {
 	DEMODMA_CTRL_DONE = 1 << 1,
 };
 
+enum {
+	DEMODMA_RESP_OKAY               = 0,
+	DEMODMA_RESP_BUS_GENERIC_ERROR  = 1,
+	DEMODMA_RESP_ADDR_DECODE_ERROR  = 2,
+};
+
 class demodma
 : public sc_core::sc_module
 {
@@ -44,6 +50,7 @@ private:
 			uint32_t len;
 			uint32_t ctrl;
 			uint32_t byte_en;
+			uint32_t error_resp;
 		};
 		uint32_t u32[8];
 	} regs;
