@@ -21,6 +21,11 @@ into the simulation.
 For TLM to be able to talk to the APB timer, a TLM-2-APB bridge
 was written in System-C.
 
+Basic setup and build instrucitons are described below or a full
+Getting Started walkthrough is also provided in the `docs` folder (`getting-started-guide.md`). Additional
+documentation is provided to build and run LMAC demos in this Co-Simulation
+environment (`lmac-demos.md`).
+
 BUILD
 ---------------------------------------
 Before building you will need to ensure that you have SystemC and SCML
