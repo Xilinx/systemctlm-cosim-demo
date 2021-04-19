@@ -77,6 +77,8 @@ RISCV_VIRT_LMAC3_TOP_C = riscv_virt_lmac3_demo.cc
 RISCV_VIRT_LMAC3_TOP_O = $(RISCV_VIRT_LMAC3_TOP_C:.cc=.o)
 VERSAL_TOP_C = versal_demo.cc
 VERSAL_TOP_O = $(VERSAL_TOP_C:.cc=.o)
+PCIE_ATS_DEMO_C = pcie-ats-demo/pcie-ats-demo.cc
+PCIE_ATS_DEMO_O = $(PCIE_ATS_DEMO_C:.cc=.o)
 
 ZYNQ_OBJS += $(ZYNQ_TOP_O)
 ZYNQMP_OBJS += $(ZYNQMP_TOP_O)
@@ -84,6 +86,7 @@ ZYNQMP_LMAC2_OBJS += $(ZYNQMP_LMAC2_TOP_O)
 RISCV_VIRT_LMAC2_OBJS += $(RISCV_VIRT_LMAC2_TOP_O)
 RISCV_VIRT_LMAC3_OBJS += $(RISCV_VIRT_LMAC3_TOP_O)
 VERSAL_OBJS += $(VERSAL_TOP_O)
+PCIE_ATS_DEMO_OBJS += $(PCIE_ATS_DEMO_O)
 
 # Uncomment to enable use of scml2
 # CPPFLAGS += -I $(SCML_INCLUDE)
@@ -120,6 +123,7 @@ SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-memory-slave.o
 SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-wires.o
 SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-ats.o
 SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-pci-ep.o
+SC_OBJS += $(LIBSOC_PATH)/soc/pci/core/pci-device-base.o
 CPPFLAGS += -I $(LIBRP_PATH)
 
 VENV=SYSTEMC_INCLUDE=$(SYSTEMC_INCLUDE) SYSTEMC_LIBDIR=$(SYSTEMC_LIBDIR)
@@ -190,6 +194,7 @@ ZYNQMP_LMAC2_OBJS += $(OBJS)
 RISCV_VIRT_LMAC2_OBJS += $(OBJS)
 RISCV_VIRT_LMAC3_OBJS += $(OBJS)
 VERSAL_OBJS += $(OBJS)
+PCIE_ATS_DEMO_OBJS += $(OBJS)
 
 TARGET_ZYNQ_DEMO = zynq_demo
 TARGET_ZYNQMP_DEMO = zynqmp_demo
@@ -197,6 +202,7 @@ TARGET_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo
 TARGET_RISCV_VIRT_LMAC2_DEMO = riscv_virt_lmac2_demo
 TARGET_RISCV_VIRT_LMAC3_DEMO = riscv_virt_lmac3_demo
 TARGET_VERSAL_DEMO = versal_demo
+TARGET_PCIE_ATS_DEMO = pcie-ats-demo/pcie-ats-demo
 
 IPXACT_LIBS = packages/ipxact
 DEMOS_IPXACT_LIB = $(IPXACT_LIBS)/xilinx.com/demos
@@ -253,6 +259,7 @@ all: $(TARGETS)
 -include $(RISCV_VIRT_LMAC2_OBJS:.o=.d)
 -include $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 -include $(VERSAL_OBJS:.o=.d)
+-include $(PCIE_ATS_DEMO_OBJS:.o=.d)
 CFLAGS += -MMD
 CXXFLAGS += -MMD
 
@@ -328,6 +335,10 @@ $(TARGET_ZYNQ_DEMO): $(ZYNQ_OBJS) $(VTOP_LIB) $(VERILATED_O)
 $(TARGET_VERSAL_DEMO): $(VERSAL_OBJS) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $(VERSAL_OBJS) $(VERILATED_O) $(LDLIBS)
 
+$(TARGET_PCIE_ATS_DEMO): LDLIBS += -lcrypto
+$(TARGET_PCIE_ATS_DEMO): $(PCIE_ATS_DEMO_OBJS) $(VERILATED_O)
+	$(CXX) $(LDFLAGS) -o $@ $(PCIE_ATS_DEMO_OBJS) $(VERILATED_O) $(LDLIBS)
+
 verilated_%.o: $(VERILATOR_ROOT)/include/verilated_%.cpp
 
 clean:
@@ -339,3 +350,5 @@ clean:
 	$(RM) $(RISCV_VIRT_LMAC3_OBJS) $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 	$(RM) -r $(VOBJ_DIR) $(CSRC_DIR) *.daidir
 	$(RM) -r $(ZL_IPXACT_DEMO_OUTDIR)
+	$(RM) $(PCIE_ATS_DEMO_OBJS) $(PCIE_ATS_DEMO_OBJS:.o=.d)
+	$(RM) $(TARGET_PCIE_ATS_DEMO)
