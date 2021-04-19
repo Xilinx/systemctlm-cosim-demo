@@ -79,6 +79,8 @@ VERSAL_TOP_C = versal_demo.cc
 VERSAL_TOP_O = $(VERSAL_TOP_C:.cc=.o)
 PCIE_ATS_DEMO_C = pcie-ats-demo/pcie-ats-demo.cc
 PCIE_ATS_DEMO_O = $(PCIE_ATS_DEMO_C:.cc=.o)
+TEST_PCIE_ATS_DEMO_VFIO_C = pcie-ats-demo/test-pcie-ats-demo-vfio.o
+TEST_PCIE_ATS_DEMO_VFIO_O = $(TEST_PCIE_ATS_DEMO_VFIO_C:.cc=.o)
 
 ZYNQ_OBJS += $(ZYNQ_TOP_O)
 ZYNQMP_OBJS += $(ZYNQMP_TOP_O)
@@ -87,6 +89,7 @@ RISCV_VIRT_LMAC2_OBJS += $(RISCV_VIRT_LMAC2_TOP_O)
 RISCV_VIRT_LMAC3_OBJS += $(RISCV_VIRT_LMAC3_TOP_O)
 VERSAL_OBJS += $(VERSAL_TOP_O)
 PCIE_ATS_DEMO_OBJS += $(PCIE_ATS_DEMO_O)
+TEST_PCIE_ATS_DEMO_VFIO_OBJS += $(TEST_PCIE_ATS_DEMO_VFIO_O)
 
 # Uncomment to enable use of scml2
 # CPPFLAGS += -I $(SCML_INCLUDE)
@@ -203,6 +206,7 @@ TARGET_RISCV_VIRT_LMAC2_DEMO = riscv_virt_lmac2_demo
 TARGET_RISCV_VIRT_LMAC3_DEMO = riscv_virt_lmac3_demo
 TARGET_VERSAL_DEMO = versal_demo
 TARGET_PCIE_ATS_DEMO = pcie-ats-demo/pcie-ats-demo
+TARGET_TEST_PCIE_ATS_DEMO_VFIO = pcie-ats-demo/test-pcie-ats-demo-vfio
 
 IPXACT_LIBS = packages/ipxact
 DEMOS_IPXACT_LIB = $(IPXACT_LIBS)/xilinx.com/demos
@@ -260,6 +264,7 @@ all: $(TARGETS)
 -include $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 -include $(VERSAL_OBJS:.o=.d)
 -include $(PCIE_ATS_DEMO_OBJS:.o=.d)
+-include $(TEST_PCIE_ATS_DEMO_VFIO_OBJS:.o=.d)
 CFLAGS += -MMD
 CXXFLAGS += -MMD
 
@@ -339,6 +344,9 @@ $(TARGET_PCIE_ATS_DEMO): LDLIBS += -lcrypto
 $(TARGET_PCIE_ATS_DEMO): $(PCIE_ATS_DEMO_OBJS) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $(PCIE_ATS_DEMO_OBJS) $(VERILATED_O) $(LDLIBS)
 
+$(TARGET_TEST_PCIE_ATS_DEMO_VFIO): $(TEST_PCIE_ATS_DEMO_VFIO_OBJS) $(VERILATED_O)
+	$(CXX) $(LDFLAGS) -o $@ $(TEST_PCIE_ATS_DEMO_VFIO_OBJS) $(LDLIBS)
+
 verilated_%.o: $(VERILATOR_ROOT)/include/verilated_%.cpp
 
 clean:
@@ -351,4 +359,5 @@ clean:
 	$(RM) -r $(VOBJ_DIR) $(CSRC_DIR) *.daidir
 	$(RM) -r $(ZL_IPXACT_DEMO_OUTDIR)
 	$(RM) $(PCIE_ATS_DEMO_OBJS) $(PCIE_ATS_DEMO_OBJS:.o=.d)
-	$(RM) $(TARGET_PCIE_ATS_DEMO)
+	$(RM) $(TEST_PCIE_ATS_DEMO_VFIO_OBJS) $(TEST_PCIE_ATS_DEMO_VFIO_OBJS:.o=.d)
+	$(RM) $(TARGET_PCIE_ATS_DEMO) $(TARGET_TEST_PCIE_ATS_DEMO_VFIO)
