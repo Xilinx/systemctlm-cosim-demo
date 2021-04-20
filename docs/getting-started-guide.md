@@ -126,7 +126,7 @@ ${HOME}/cosim/qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7serie
 ```
 
 ## Example Output
-Below is some example output showing the Buildroot instance quererying the SystemC simulated evironment:
+Below is some example output showing the Buildroot instance querying the SystemC simulated environment:
 
 ```bash
 Welcome to Buildroot
