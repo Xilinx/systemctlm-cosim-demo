@@ -1,6 +1,6 @@
 # How to set up and run the Co-Simulation Demo
 
-This demonstration shows how to compile and run the Co-Simulation demo of Buildroot in QEMU with a simulated device in SystemC. This configeration is tested working for Ubuntu 18.0.4 and assumes that `cosim` is located in your home directory. This walkthough also assumes the device being emulated is the Zynq-7000 SoC.
+This demonstration shows how to compile and run the Co-Simulation demo of Buildroot in QEMU with a simulated device in SystemC.  This configuration is tested working for Ubuntu 18.0.4 and assumes that a `cosim` directory is created in your home directory. This walkthrough also assumes that the device being emulated by QEMU is the Xilinx Zynq-7000 SoC.  This SoC seemed like a good candidate but the concept can apply to any QEMU machine which plugs in a compatible remoteport bus interface.
 
 ## Dependencies
 Below are the dependencies needed to compile all the libraries in this demo:
