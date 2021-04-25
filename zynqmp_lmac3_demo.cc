@@ -41,7 +41,6 @@ using namespace std;
 
 #include "trace.h"
 #include "iconnect.h"
-#include "memory.h"
 #include "xilinx-axidma.h"
 #include "soc/xilinx/zynqmp/xilinx-zynqmp.h"
 
