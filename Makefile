@@ -99,7 +99,6 @@ PCIE_ACC_MD5SUM_VFIO_OBJS += $(PCIE_ACC_MD5SUM_VFIO_O)
 # LDFLAGS += -L $(SCML_LIBDIR)
 # LDLIBS += -lscml2 -lscml2_logging
 
-SC_OBJS += memory.o
 SC_OBJS += trace.o
 SC_OBJS += debugdev.o
 SC_OBJS += demo-dma.o
@@ -118,6 +117,9 @@ CPPFLAGS += -I $(LIBSOC_ZYNQMP_PATH)
 
 CPPFLAGS += -I $(LIBSOC_PATH)/soc/xilinx/versal/
 SC_OBJS += $(LIBSOC_PATH)/soc/xilinx/versal/xilinx-versal.o
+
+CPPFLAGS += -I $(LIBSOC_PATH)/tests/test-modules/
+SC_OBJS += $(LIBSOC_PATH)/tests/test-modules/memory.o
 
 LIBRP_PATH=$(LIBSOC_PATH)/libremote-port
 C_OBJS += $(LIBRP_PATH)/safeio.o

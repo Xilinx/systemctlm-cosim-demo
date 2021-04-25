@@ -41,7 +41,7 @@ using namespace std;
 
 #include "trace.h"
 #include "iconnect.h"
-#include "memory.h"
+#include "tests/test-modules/memory.h"
 #include "debugdev.h"
 #include "demo-dma.h"
 #include "soc/xilinx/zynqmp/xilinx-zynqmp.h"
