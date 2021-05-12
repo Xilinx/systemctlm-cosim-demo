@@ -2,8 +2,8 @@
 SNPS_FLAGS = -full64 -cpp g++-6 -cc gcc-6
 CC = gcc-6
 CXX = g++-6
-SNPS_CFLAGS = -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli -DTLI_BYTE_VIEW_DEBUG  -DVCS  -I${VCS_HOME}/include/systemc231 -I${VCS_HOME}/etc/systemc/tlm/include/tlm -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf -fPIC -g -Og -m64
-SNPS_CXXFLAGS = -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli -DTLI_BYTE_VIEW_DEBUG  -DVCS  -I${VCS_HOME}/include/systemc231 -I${VCS_HOME}/etc/systemc/tlm/include/tlm -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf -fPIC -g -Og -m64
+SNPS_CFLAGS = -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli -DTLI_BYTE_VIEW_DEBUG  -DVCS  -I${VCS_HOME}/include/systemc232 -I${VCS_HOME}/etc/systemc/tlm/include/tlm -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf -fPIC -g -Og -m64
+SNPS_CXXFLAGS = -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli -DTLI_BYTE_VIEW_DEBUG  -DVCS  -I${VCS_HOME}/include/systemc232 -I${VCS_HOME}/etc/systemc/tlm/include/tlm -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf -fPIC -g -Og -m64
 
 # path for libremote port
 LIBSOC_PATH=libsystemctlm-soc
