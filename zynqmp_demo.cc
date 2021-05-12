@@ -595,6 +595,7 @@ void usage(void)
 
 int sc_main(int argc, char* argv[])
 {
+    const char* socket_name;    
 	Top *top;
 	uint64_t sync_quantum;
 	sc_trace_file *trace_fp = NULL;
@@ -605,25 +606,27 @@ int sc_main(int argc, char* argv[])
 
 	if (argc < 3) {
 		sync_quantum = 10000;
+        socket_name = "unix:/tmp/qemu/qemu-rport-_machine_cosim";
 	} else {
 		sync_quantum = strtoull(argv[2], NULL, 10);
+        socket_name = argv[1];
 	}
 
-	sc_set_time_resolution(1, SC_PS);
+	sc_set_time_resolution(1, SC_FS);
 
-	top = new Top("top", argv[1], sc_time((double) sync_quantum, SC_NS));
+	top = new Top("top", socket_name, sc_time((double) sync_quantum, SC_NS));
 
-	if (argc < 3) {
-		sc_start(1, SC_PS);
-		sc_stop();
-		usage();
-		exit(EXIT_FAILURE);
-	}
+//	if (argc < 3) {
+//		sc_start(1, SC_PS);
+//		sc_stop();
+//		usage();
+//		exit(EXIT_FAILURE);
+//	}
 
 	trace_fp = sc_create_vcd_trace_file("trace");
 	trace(trace_fp, *top, top->name());
 
-	sc_start();
+	sc_start(10000000, SC_SEC);
 	if (trace_fp) {
 		sc_close_vcd_trace_file(trace_fp);
 	}
