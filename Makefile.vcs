@@ -1,5 +1,5 @@
 # flags for synopsys tools
-SNPS_FLAGS = -full64 -cpp g++-6 -cc gcc-6
+SNPS_FLAGS = -full64 -cpp g++-6 -cc gcc-6 -kdb -lca
 CC = gcc-6
 CXX = g++-6
 SNPS_CFLAGS = -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli -DTLI_BYTE_VIEW_DEBUG  -DVCS  -I${VCS_HOME}/include/systemc232 -I${VCS_HOME}/etc/systemc/tlm/include/tlm -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf -fPIC -g -Og -m64
@@ -42,15 +42,15 @@ COSIM_SYSC_FILES = debugdev.cc \
 CXX_FILES = $(RP_CXX_FILES) $(COSIM_SYSC_FILES)
 C_FILES = $(RP_C_FILES)
 
-comp: uvm comp_verilog comp_c libsc_hier.so
+comp: uvm sysc_verilog comp_c libsc_hier.so comp_verilog
 	mkdir work -p
 	echo "compiling c++ files"
-	vcs -sysc $(SNPS_FLAGS) -ntb_opts uvm -debug_access+all libsc_hier.so sc_main -timescale=1ps/1fs -lca -o simv2
+	vcs -j16 -sysc $(SNPS_FLAGS) libsc_hier.so -sysc=show_sc_main sc_main test_bench -ntb_opts uvm -debug_access+all  -timescale=1ps/1fs -o simv2
 
 
-comp_verilog: axi_ram.v
-	vlogan $(SNPS_FLAGS) -sysc -sysc=opt_if -sysc=gen_portmap axi_ram.v -sc_model axi_ram
-	vlogan $(SNPS_FLAGS) -sysc axi_ram.v -sc_model axi_ram -sc_portmap axi_ram.portmap
+sysc_verilog: sysc_verilog_top.sv
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -sysc -sysc=opt_if -sysc=gen_portmap sysc_verilog_top.sv -sc_model sysc_verilog_top
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -sysc -sysc=opt_if sysc_verilog_top.sv -sc_model sysc_verilog_top -sc_portmap sysc_verilog_top.portmap
 
 # TODO: finer grain control
 comp_c: $(CXX_FILES) $(C_FILES)
@@ -58,8 +58,11 @@ comp_c: $(CXX_FILES) $(C_FILES)
 	$(CC) -c $(SNPS_CFLAGS) $(C_FILES)
 	$(CC) -g -fPIC -shared -o libsc_hier.so *.o
 
+comp_verilog:
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -f Flist
+
 uvm:
-	vlogan $(SNPS_FLAGS) -sverilog -ntb_opts uvm
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -ntb_opts uvm
 
 
 

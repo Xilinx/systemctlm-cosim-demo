@@ -40,7 +40,7 @@ using namespace sc_dt;
 using namespace std;
 #define HAVE_VERILOG
 #define HAVE_VERILOG_VCS
-#include "axi_ram.h"
+#include "sysc_verilog_top.h"
 #include "iconnect.h"
 #include "debugdev.h"
 #include "demo-dma.h"
@@ -73,7 +73,7 @@ SC_MODULE(Top)
 	
 	tlm2axi_bridge<ADDR_WIDTH, DATA_WIDTH> *tlm2axi_bridge_inst;
 	
-	axi_ram *axi_ram_inst;
+	sysc_verilog_top *sysc_verilog_top_inst;
 
 
     sc_signal<sc_bv<ID_WIDTH> >     s_axi_awid;
@@ -184,7 +184,7 @@ SC_MODULE(Top)
 		bus->memmap(BASE_ADDR + 0x10000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, dma->tgt_socket);
 
-		tlm2axi_bridge_inst = new tlm2axi_bridge<ADDR_WIDTH, DATA_WIDTH> ("tlm2axi-bridge-inst");
+		tlm2axi_bridge_inst = new tlm2axi_bridge<ADDR_WIDTH, DATA_WIDTH> ("tlm2axi_bridge_inst");
 		
 		bus->memmap(BASE_ADDR + 0x20000ULL, 0x10 - 1,
 				ADDRMODE_RELATIVE, -1, tlm2axi_bridge_inst->tgt_socket);
@@ -198,49 +198,49 @@ SC_MODULE(Top)
 
 		debug->irq(zynq.pl2ps_irq[0]);
 		dma->irq(zynq.pl2ps_irq[1]);
-
 		/* Slow clock to keep simulation fast.  */
-		clk = new sc_clock("clk", sc_time(10, SC_US));
+		clk = new sc_clock("clk", sc_time(1, SC_NS));
 		
-		axi_ram_inst = new axi_ram("axi_ram_inst");
-        axi_ram_inst->clk(*clk);
-        axi_ram_inst->rst(rst);
+		sysc_verilog_top_inst = new sysc_verilog_top("sysc_verilog_top_inst");
+        sysc_verilog_top_inst->clk(*clk);
+        sysc_verilog_top_inst->rst(rst);
+        sysc_verilog_top_inst->rst_n(rst_n);
         
-        axi_ram_inst->s_axi_awid(s_axi_awid);
-        axi_ram_inst->s_axi_awaddr(s_axi_awaddr);
-        axi_ram_inst->s_axi_awlen(s_axi_awlen);
-        axi_ram_inst->s_axi_awsize(s_axi_awsize);
-        axi_ram_inst->s_axi_awburst(s_axi_awburst);
-        axi_ram_inst->s_axi_awlock(s_axi_awlock);
-        axi_ram_inst->s_axi_awcache(s_axi_awcache);
-        axi_ram_inst->s_axi_awprot(s_axi_awprot);
-        axi_ram_inst->s_axi_awvalid(s_axi_awvalid);
-        axi_ram_inst->s_axi_awready(s_axi_awready);
-        axi_ram_inst->s_axi_wdata(s_axi_wdata);
-        axi_ram_inst->s_axi_wstrb(s_axi_wstrb);
-        axi_ram_inst->s_axi_wlast(s_axi_wlast);
-        axi_ram_inst->s_axi_wvalid(s_axi_wvalid);
-        axi_ram_inst->s_axi_wready(s_axi_wready);
-        axi_ram_inst->s_axi_bid(s_axi_bid);
-        axi_ram_inst->s_axi_bresp(s_axi_bresp);
-        axi_ram_inst->s_axi_bvalid(s_axi_bvalid);
-        axi_ram_inst->s_axi_bready(s_axi_bready);
-        axi_ram_inst->s_axi_arid(s_axi_arid);
-        axi_ram_inst->s_axi_araddr(s_axi_araddr);
-        axi_ram_inst->s_axi_arlen(s_axi_arlen);
-        axi_ram_inst->s_axi_arsize(s_axi_arsize);
-        axi_ram_inst->s_axi_arburst(s_axi_arburst);
-        axi_ram_inst->s_axi_arlock(s_axi_arlock);
-        axi_ram_inst->s_axi_arcache(s_axi_arcache);
-        axi_ram_inst->s_axi_arprot(s_axi_arprot);
-        axi_ram_inst->s_axi_arvalid(s_axi_arvalid);
-        axi_ram_inst->s_axi_arready(s_axi_arready);
-        axi_ram_inst->s_axi_rid(s_axi_rid);
-        axi_ram_inst->s_axi_rdata(s_axi_rdata);
-        axi_ram_inst->s_axi_rresp(s_axi_rresp);
-        axi_ram_inst->s_axi_rlast(s_axi_rlast);
-        axi_ram_inst->s_axi_rvalid(s_axi_rvalid);
-        axi_ram_inst->s_axi_rready(s_axi_rready);
+        sysc_verilog_top_inst->s_axi_awid(s_axi_awid);
+        sysc_verilog_top_inst->s_axi_awaddr(s_axi_awaddr);
+        sysc_verilog_top_inst->s_axi_awlen(s_axi_awlen);
+        sysc_verilog_top_inst->s_axi_awsize(s_axi_awsize);
+        sysc_verilog_top_inst->s_axi_awburst(s_axi_awburst);
+        sysc_verilog_top_inst->s_axi_awlock(s_axi_awlock);
+        sysc_verilog_top_inst->s_axi_awcache(s_axi_awcache);
+        sysc_verilog_top_inst->s_axi_awprot(s_axi_awprot);
+        sysc_verilog_top_inst->s_axi_awvalid(s_axi_awvalid);
+        sysc_verilog_top_inst->s_axi_awready(s_axi_awready);
+        sysc_verilog_top_inst->s_axi_wdata(s_axi_wdata);
+        sysc_verilog_top_inst->s_axi_wstrb(s_axi_wstrb);
+        sysc_verilog_top_inst->s_axi_wlast(s_axi_wlast);
+        sysc_verilog_top_inst->s_axi_wvalid(s_axi_wvalid);
+        sysc_verilog_top_inst->s_axi_wready(s_axi_wready);
+        sysc_verilog_top_inst->s_axi_bid(s_axi_bid);
+        sysc_verilog_top_inst->s_axi_bresp(s_axi_bresp);
+        sysc_verilog_top_inst->s_axi_bvalid(s_axi_bvalid);
+        sysc_verilog_top_inst->s_axi_bready(s_axi_bready);
+        sysc_verilog_top_inst->s_axi_arid(s_axi_arid);
+        sysc_verilog_top_inst->s_axi_araddr(s_axi_araddr);
+        sysc_verilog_top_inst->s_axi_arlen(s_axi_arlen);
+        sysc_verilog_top_inst->s_axi_arsize(s_axi_arsize);
+        sysc_verilog_top_inst->s_axi_arburst(s_axi_arburst);
+        sysc_verilog_top_inst->s_axi_arlock(s_axi_arlock);
+        sysc_verilog_top_inst->s_axi_arcache(s_axi_arcache);
+        sysc_verilog_top_inst->s_axi_arprot(s_axi_arprot);
+        sysc_verilog_top_inst->s_axi_arvalid(s_axi_arvalid);
+        sysc_verilog_top_inst->s_axi_arready(s_axi_arready);
+        sysc_verilog_top_inst->s_axi_rid(s_axi_rid);
+        sysc_verilog_top_inst->s_axi_rdata(s_axi_rdata);
+        sysc_verilog_top_inst->s_axi_rresp(s_axi_rresp);
+        sysc_verilog_top_inst->s_axi_rlast(s_axi_rlast);
+        sysc_verilog_top_inst->s_axi_rvalid(s_axi_rvalid);
+        sysc_verilog_top_inst->s_axi_rready(s_axi_rready);
 
         tlm2axi_bridge_inst->clk(*clk);
 	tlm2axi_bridge_inst->resetn(rst_n);
