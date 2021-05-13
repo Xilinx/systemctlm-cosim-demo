@@ -36,7 +36,7 @@ COSIM_SYSC_FILES = debugdev.cc \
 		   demo-dma.cc \
 		   memory.cc \
 		   trace.cc \
-		   zynqmp_demo.cc \
+		   zynqmp_vcs_demo.cc \
 		   $(LIBSOC_ZYNQMP_PATH)/xilinx-zynqmp.cc
 
 CXX_FILES = $(RP_CXX_FILES) $(COSIM_SYSC_FILES)
