@@ -75,6 +75,23 @@ SC_MODULE(Top)
 		debug("debug"),
 		rst("rst")
 	{
+		   int sockfd, newsockfd, portno, clilen;
+		   char buffer[256];
+		   struct sockaddr_in serv_addr, cli_addr;
+		   int  n;
+		   
+		   /* First call to socket() function */
+		   sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		   
+		   if (sockfd < 0) {
+		      perror("ERROR opening socket");
+		      exit(1);
+		   }
+		   
+		   /* Initialize socket structure */
+		   bzero((char *) &serv_addr, sizeof(serv_addr));
+		   portno = 5001;
+
 		m_qk.set_global_quantum(quantum);
 
 		zynq.rst(rst);
