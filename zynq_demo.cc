@@ -44,6 +44,12 @@ using namespace std;
 #include "debugdev.h"
 #include "soc/xilinx/zynq/xilinx-zynq.h"
 
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <string.h>
+#define PORT 8080
+
 #define NR_MASTERS	1
 #define NR_DEVICES	1
 
