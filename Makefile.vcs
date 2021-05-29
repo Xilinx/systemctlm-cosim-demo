@@ -55,7 +55,7 @@ RP_CXX_FILES = $(LIBRP_PATH)/remote-port-tlm.cc \
 
 COSIM_SYSC_FILES = debugdev.cc \
 		demo-dma.cc \
-		memory.cc \
+		$(LIBSOC_PATH)/tests/test-modules/memory.cc \
 		trace.cc \
 		zynqmp_vcs_demo.cc \
 		$(LIBSOC_ZYNQMP_PATH)/xilinx-zynqmp.cc
