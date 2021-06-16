@@ -89,44 +89,69 @@ private:
 		{}
 
 		//
-		// Transmit an ATS translation request for the region.
+		// Transmit ATS translation requests for the region.
 		//
 		// virt_addr: region start address
 		// length: region length
 		//
 		void do_ats_req(uint64_t virt_addr, uint64_t length)
 		{
-			atsattr_extension *atsattr = new atsattr_extension();
-			sc_time delay(SC_ZERO_TIME);
-			tlm::tlm_generic_payload gp;
-			uint64_t attr = atsattr_extension::ATTR_WRITE |
-					atsattr_extension::ATTR_READ |
-					atsattr_extension::ATTR_EXEC;
-
-			gp.set_extension(atsattr);
-			gp.set_command(tlm::TLM_IGNORE_COMMAND);
-
 			//
-			// Set the ATS translation request's region start
-			// address, length and attributes
+			// Make sure to have the translations naturally
+			// aligned to SZ_4K size
 			//
-			gp.set_address(virt_addr);
-			atsattr->set_length(length);
-			atsattr->set_attributes(attr);
+			length += virt_addr & (SZ_4K-1);
+			virt_addr &= ~(SZ_4K-1);
 
-			//
-			// Transmit the ATS request
-			//
-			m_ats_req->b_transport(gp, delay);
+                        while (length) {
+				atsattr_extension *atsattr = new atsattr_extension();
+				sc_time delay(SC_ZERO_TIME);
+				tlm::tlm_generic_payload gp;
+				uint64_t attr = atsattr_extension::ATTR_WRITE |
+						atsattr_extension::ATTR_READ |
+						atsattr_extension::ATTR_EXEC;
 
-			if (gp.get_response_status() == tlm::TLM_OK_RESPONSE &&
-				atsattr->get_result() == atsattr_extension::RESULT_OK) {
+				gp.set_extension(atsattr);
+				gp.set_command(tlm::TLM_IGNORE_COMMAND);
 
 				//
-				// Translation succeded, add into the ATC cache
+				// Set the ATS translation request's region start
+				// address and attributes
 				//
-				m_regions.push_back(MemoryRegion(virt_addr, gp.get_address(),
-							length, atsattr->get_attributes()));
+				gp.set_address(virt_addr);
+				atsattr->set_attributes(attr);
+
+				//
+				// Transmit the ATS request
+				//
+				m_ats_req->b_transport(gp, delay);
+
+				if (gp.get_response_status() == tlm::TLM_OK_RESPONSE &&
+					atsattr->get_result() == atsattr_extension::RESULT_OK) {
+
+					//
+					// Make sure to have the address
+					// aligned to the returned length
+					//
+					virt_addr &= ~(atsattr->get_length()-1);
+
+					//
+					// Translation succeded, add into the ATC cache
+					//
+					m_regions.push_back(MemoryRegion(virt_addr, gp.get_address(),
+									atsattr->get_length(),
+									atsattr->get_attributes()));
+
+					if (atsattr->get_length() > length) {
+						//
+						// Last translations has been received
+						//
+						break;
+					}
+
+					length -= atsattr->get_length();
+					virt_addr += atsattr->get_length();
+				}
 			}
 		}
 
@@ -617,7 +642,7 @@ err:
 				uint64_t mask = (SZ_4K - 1);
 
 				if (!m_atc.contains(virt_addr)) {
-					m_atc.do_ats_req(virt_addr, SZ_4K);
+					m_atc.do_ats_req(virt_addr, len);
 				}
 
 				if (!m_atc.test_attr(virt_addr,
@@ -630,8 +655,6 @@ err:
 
 				//
 				// Adjust length to not cross SZ_4K boundaries
-				// since all translations are naturally aligned
-				// and of SZ_4K size
 				//
 				md5_len = (len <= SZ_4K) ? len : SZ_4K;
 				md5_len -= (phys_addr & mask);
