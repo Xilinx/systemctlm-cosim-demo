@@ -23,10 +23,10 @@
 CC ?= gcc
 CXX ?= g++
 SNPS_FLAGS = -full64 -cpp $(CXX) -cc $(CC) -kdb -lca
+SNPS_VFLAGS = -debug_acc+r+w+dmptf -debug_region+cell+encrypt
 CPPFLAGS += -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli
 CPPFLAGS += -DTLI_BYTE_VIEW_DEBUG -DVCS -I${VCS_HOME}/include/systemc232
-CPPFLAGS += -I${VCS_HOME}/etc/systemc/tlm/include/tlm -I${VCS_HOME}/include
-CPPFLAGS += -I${VCS_HOME}/include/cosim/bf
+CPPFLAGS += -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf
 
 CFLAGS += -fPIC -g -Og -m64
 CXXFLAGS += -fPIC -g -Og -m64
@@ -68,7 +68,7 @@ TARGET = zynqmp_vcs_demo
 comp: uvm sysc_verilog comp_c libsc_hier.so
 	mkdir work -p
 	echo "compiling c++ files"
-	vcs $(MAKE_PARALLEL) -sysc $(SNPS_FLAGS) libsc_hier.so -sysc=show_sc_main sc_main -ntb_opts uvm -debug_access+all  -timescale=1ps/1fs -o $(TARGET)
+	vcs $(MAKE_PARALLEL) -sysc $(SNPS_FLAGS) libsc_hier.so -sysc=show_sc_main -top sc_main -ntb_opts uvm -debug_access+all  -timescale=1ps/1fs -o $(TARGET)
 
 sysc_verilog: sysc_verilog_top.sv
 	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -sysc -sysc=opt_if -sysc=gen_portmap sysc_verilog_top.sv -sc_model sysc_verilog_top
