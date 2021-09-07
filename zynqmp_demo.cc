@@ -59,6 +59,7 @@ using namespace std;
 #include "Vaxilite_dev.h"
 #include "Vaxifull_dev.h"
 #include "verilated.h"
+#include <verilated_vcd_sc.h>
 #endif
 
 #define NR_DEMODMA      4
@@ -623,9 +624,28 @@ int sc_main(int argc, char* argv[])
 	trace_fp = sc_create_vcd_trace_file("trace");
 	trace(trace_fp, *top, top->name());
 
+#if defined(HAVE_VERILOG_VERILATOR) && VM_TRACE
+        Verilated::traceEverOn(true);
+        // If verilator was invoked with --trace argument,
+        // and if at run time passed the +trace argument, turn on tracing
+        VerilatedVcdSc* tfp = NULL;
+        const char* flag = Verilated::commandArgsPlusMatch("trace");
+        if (flag && 0 == strcmp(flag, "+trace")) {
+                tfp = new VerilatedVcdSc;
+                top->apb_timer->trace(tfp, 99);
+                top->al->trace(tfp, 99);
+                top->af->trace(tfp, 99);
+                tfp->open("vlt_dump.vcd");
+        }
+#endif
+
 	sc_start();
 	if (trace_fp) {
 		sc_close_vcd_trace_file(trace_fp);
 	}
+
+#if defined(HAVE_VERILOG_VERILATOR) && VM_TRACE
+        if (tfp) { tfp->close(); tfp = NULL; }
+#endif
 	return 0;
 }
