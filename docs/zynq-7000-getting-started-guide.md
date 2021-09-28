@@ -2,6 +2,20 @@
 
 This demonstration shows how to compile and run the Co-Simulation demo of Buildroot in QEMU with a simulated device in SystemC.  **Buildroot was selected for this demo, but other Linux Kernel's can be built and deployed in QEMU and used as well.** This configuration is tested working for Ubuntu 18.0.4 and assumes that a `cosim` directory is created in your home directory. This walkthrough also assumes that the device being emulated by QEMU is the Xilinx Zynq-7000 SoC.  This SoC seemed like a good candidate but the concept can apply to any QEMU machine which plugs in a compatible remoteport bus interface.
 
+Here is a basic diagram of the enviornment we will setup:
+```
+        System Clock Demo
+                           +--------------------+
+                           |    SystemC-TLM     |
++--------+                 |                    |
+|        |   Remote Port   | Memory Mapped Regs |
+|  QEMU  |<--------------->+-------+------------+
+|        |                 |  CLK  | 0X4000000  |
++--------+                 +-------+------------+
+                           |  ...  |    ...     |
+                           +-------+------------+
+```
+
 ## Dependencies
 
 Below are the dependencies needed to compile all the libraries in this demo:
@@ -26,9 +40,8 @@ mkdir ~/cosim
 ```bash
 # Build and install the binaries
 cd ~/cosim
-SYSC_VERSION=systemc-2.3.2
 wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.2.tar.gz
-tar xf systemc.2.3.2.tar.gz
+tar xf systemc-2.3.2.tar.gz
 cd systemc-2.3.2/
 CXXFLAGS=-std=c++11 ./configure ; make
 sudo make install
@@ -40,14 +53,13 @@ sudo make install
 cd ~/cosim
 git clone https://github.com/Xilinx/qemu.git
 cd qemu
-git checkout 7e3e3ae09af8abe70383a5
+git checkout 303b509ec23138c43be8a371
 git submodule update --init dtc
 
 # Configure and build
 ./configure --target-list="arm-softmmu,aarch64-softmmu,microblazeel-softmmu" --enable-fdt --disable-kvm --disable-xen
 make -j$((`nproc`+1))
 sudo make install
-export SYSTEM=/cosim/systemc-2.3.2/
 ```
 
 ### Demo Setup
@@ -90,7 +102,9 @@ For this walkthough we will be configuring the demo to emulate the Zynq-7000 SoC
 # Pull the .dtsi files for the Zynq-7000
 wget https://raw.githubusercontent.com/Xilinx/qemu-devicetrees/master/zynq-pl-remoteport.dtsi
 wget https://raw.githubusercontent.com/Xilinx/linux-xlnx/master/arch/arm/boot/dts/zynq-7000.dtsi
-wget https://raw.githubusercontent.com/Xilinx/device-tree-xlnx/master/device_tree/data/kernel_dtsi/2017.3/BOARD/zc702.dtsi
+# kernel 5.4.75 zynq-zc702.dts
+wget https://raw.githubusercontent.com/torvalds/linux/6e97ed6efa701db070da0054b055c085895aba86/arch/arm/boot/dts/zynq-zc702.dts
+echo "#include \"zynq-pl-remoteport.dtsi\"" >> zynq-zc702.dts
 
 # Setup the Buildroot compilation configeration
 rm .config .config.old  -f
@@ -119,7 +133,7 @@ EOF
 
 # Build
 make clean && make olddefconfig
-./utils/br/make
+./utils/brmake
 ```
 
 ## Running the Demo
@@ -127,13 +141,13 @@ make clean && make olddefconfig
 In order to run the co-simulation demo, you will need two shells open. One for QEMU and the other for SystemC. In the first shell navigate to the `systemctlm-cosim-demo` directory (`cd ~/cosim/systemctlm-cosim-demo`). This command will start the SystemC simulation:
 
 ```bash
-LD_LIBRARY_PATH=${SYSTEMC}/systemc-2.3.2/src/.libs/ ./zynq_demo 	unix:${HOME}/cosim/buildroot/handles/qemu-rport-_cosim@0 1000000
+LD_LIBRARY_PATH=${HOME}/cosim/systemc-2.3.2/lib-linux64/  ./zynq_demo  unix:${HOME}/cosim/buildroot/handles/qemu-rport-_cosim@0 1000000
 ```
 
 Start the QEMU instance in the second shell by running (in any directory):
 
 ```bash
-${SYSTEMC}/qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -m 1G -kernel ${SYSTEMC}/buildroot/output/images/uImage -dtb ${SYSTEMC}/buildroot/output/images/zynq-zc702.dtb --initrd ${SYSTEMC}/buildroot/output/images/rootfs.cpio.gz -serial /dev/null -serial mon:stdio -display none -net nic -net nic -net user -machine-path ${SYSTEMC}/buildroot/handles -icount 0,sleep=off -rtc clock=vm -sync-quantum 1000000
+${HOME}/cosim/qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -m 1G -kernel ${HOME}/cosim/buildroot/output/images/uImage -dtb ${HOME}/cosim/buildroot/output/images/zynq-zc702.dtb --initrd ${HOME}/cosim/buildroot/output/images/rootfs.cpio.gz -serial /dev/null -serial mon:stdio -display none -net nic -net nic -net user -machine-path ${HOME}/cosim/buildroot/handles -icount 0,sleep=off -rtc clock=vm -sync-quantum 1000000
 ```
 
 ## Example Output
