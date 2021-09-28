@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2021 Tianrui Wei <tianrui-wei@outlook.com>.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# flags for synopsys tools
+CC ?= gcc
+CXX ?= g++
+SNPS_FLAGS = -full64 -cpp $(CXX) -cc $(CC) -kdb -lca
+SNPS_VFLAGS = -debug_acc+r+w+dmptf -debug_region+cell+encrypt
+CPPFLAGS += -I${PWD}/csrc/sysc/include -I${VCS_HOME}/etc/systemc/tlm/tli
+CPPFLAGS += -DTLI_BYTE_VIEW_DEBUG -DVCS -I${VCS_HOME}/include/systemc232
+CPPFLAGS += -I${VCS_HOME}/include -I${VCS_HOME}/include/cosim/bf
+
+CFLAGS += -fPIC -g -Og -m64
+CXXFLAGS += -fPIC -g -Og -m64
+
+# path for libremote port
+LIBSOC_PATH=libsystemctlm-soc
+LIBSOC_ZYNQMP_PATH=$(LIBSOC_PATH)/soc/xilinx/zynqmp
+LIBRP_PATH=$(LIBSOC_PATH)/libremote-port
+
+# include files for lib remote port
+CPPFLAGS += -I $(LIBRP_PATH) -I $(LIBSOC_PATH)
+
+#include header files in this directory
+CPPFLAGS += -I . -I $(LIBSOC_ZYNQMP_PATH)
+
+RP_C_FILES = $(LIBRP_PATH)/safeio.c \
+		$(LIBRP_PATH)/remote-port-proto.c \
+		$(LIBRP_PATH)/remote-port-sk.c
+
+RP_CXX_FILES = $(LIBRP_PATH)/remote-port-tlm.cc \
+		$(LIBRP_PATH)/remote-port-tlm-memory-master.cc \
+		$(LIBRP_PATH)/remote-port-tlm-ats.cc \
+		$(LIBRP_PATH)/remote-port-tlm-pci-ep.cc \
+		$(LIBRP_PATH)/remote-port-tlm-memory-slave.cc \
+		$(LIBRP_PATH)/remote-port-tlm-wires.cc
+
+COSIM_SYSC_FILES = debugdev.cc \
+		demo-dma.cc \
+		$(LIBSOC_PATH)/tests/test-modules/memory.cc \
+		trace.cc \
+		zynqmp_vcs_demo.cc \
+		$(LIBSOC_ZYNQMP_PATH)/xilinx-zynqmp.cc
+
+CXX_FILES = $(RP_CXX_FILES) $(COSIM_SYSC_FILES)
+C_FILES = $(RP_C_FILES)
+
+TARGET = zynqmp_vcs_demo
+
+comp: uvm sysc_verilog comp_c libsc_hier.so
+	mkdir work -p
+	echo "compiling c++ files"
+	vcs $(MAKE_PARALLEL) -sysc $(SNPS_FLAGS) libsc_hier.so -sysc=show_sc_main -top sc_main -ntb_opts uvm -debug_access+all  -timescale=1ps/1fs -o $(TARGET)
+
+sysc_verilog: sysc_verilog_top.sv
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -sysc -sysc=opt_if -sysc=gen_portmap sysc_verilog_top.sv -sc_model sysc_verilog_top
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -sysc -sysc=opt_if sysc_verilog_top.sv -sc_model sysc_verilog_top -sc_portmap sysc_verilog_top.portmap
+
+# TODO: finer grain control
+comp_c: $(CXX_FILES) $(C_FILES)
+	syscan $(SNPS_FLAGS) -cflags "$(CPPFLAGS) $(CXXFLAGS)" $(CXX_FILES)
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(C_FILES)
+	$(CC) -g -fPIC -shared -o libsc_hier.so *.o
+
+uvm:
+	vlogan $(SNPS_FLAGS) $(SNPS_VFLAGS) -sverilog -ntb_opts uvm
+
+clean:
+	$(RM) -rf AN.DB csrc $(TARGET).daidir $(TARGET) work ucli.key vc_hdrs.h DVEfiles
+	$(RM) -rf *.vpd dir1 *.o *.d *.so  tli_uvm_mem_data.sv *.log *.portmap
+	$(RM) -rf *.error 64 verdiLog novas.conf work.lib++ verdi_config_file
