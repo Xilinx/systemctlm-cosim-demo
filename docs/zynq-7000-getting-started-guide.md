@@ -22,7 +22,7 @@ Below are the dependencies needed to compile all the libraries in this demo:
 
 ```bash
 sudo apt update
-sudo apt install cmake make gcc qemu-kvm qemu-system qemu-user-static verilator
+sudo apt install cmake make wget gcc qemu-kvm qemu-system qemu-user-static verilator
 ```
 
 ## Setup and Compilation
