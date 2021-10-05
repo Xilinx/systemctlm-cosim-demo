@@ -22,7 +22,7 @@ Below are the dependencies needed to compile all the libraries in this demo:
 
 ```bash
 sudo apt update
-sudo apt install cmake make wget gcc g++ qemu-kvm qemu-system qemu-user-static verilator
+sudo apt install git cmake make wget gcc g++ python3 pkg-config libglib2.0-dev libpixman-1-dev qemu-kvm qemu-system qemu-user-static verilator
 ```
 
 ## Setup and Compilation
@@ -43,7 +43,7 @@ cd ~/cosim
 wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.2.tar.gz
 tar xf systemc-2.3.2.tar.gz
 cd systemc-2.3.2/
-CXXFLAGS=-std=c++11 ./configure ; make
+CXXFLAGS=-std=c++11 ./configure --with-unix-layout --prefix=/ --includedir=/usr/include ; make
 sudo make install
 ```
 
