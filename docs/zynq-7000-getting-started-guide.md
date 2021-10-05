@@ -80,7 +80,7 @@ HAVE_VERILOG=n
 HAVE_VERILOG_VERILATOR=n
 HAVE_VERILOG_VCS=n
 VM_TRACE=1
-EOF*
+EOF
 
 # Build the demo
 make zynq_demo
