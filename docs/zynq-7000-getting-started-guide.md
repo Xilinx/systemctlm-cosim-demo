@@ -37,6 +37,8 @@ mkdir ~/cosim
 
 ### SystemC Setup
 
+Here we install SystemC into the system include, bin, and lib directories, but this can also be done in the user's home directory and added to the proper system paths.
+
 ```bash
 # Build and install the binaries
 cd ~/cosim
