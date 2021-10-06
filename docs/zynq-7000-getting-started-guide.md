@@ -22,7 +22,7 @@ Below are the dependencies needed to compile all the libraries in this demo:
 
 ```bash
 sudo apt update
-sudo apt install git cmake make wget gcc g++ python3 pkg-config libglib2.0-dev libpixman-1-dev qemu-kvm qemu-system qemu-user-static verilator
+sudo apt install git cmake make wget gcc g++ python3 pkg-config libglib2.0-dev libpixman-1-dev verilator expect cpio unzip rsync bc libssl-dev
 ```
 
 ## Setup and Compilation
@@ -138,10 +138,10 @@ make clean && make olddefconfig
 
 ## Running the Demo
 
-In order to run the co-simulation demo, you will need two shells open. One for QEMU and the other for SystemC. In the first shell navigate to the `systemctlm-cosim-demo` directory (`cd ~/cosim/systemctlm-cosim-demo`). This command will start the SystemC simulation:
+In order to run the co-simulation demo, you will need two shells open. One for QEMU and the other for SystemC. In the first shell run the command below to start the SystemC simulation:
 
 ```bash
-LD_LIBRARY_PATH=${HOME}/cosim/systemc-2.3.2/lib-linux64/  ./zynq_demo  unix:${HOME}/cosim/buildroot/handles/qemu-rport-_cosim@0 1000000
+LD_LIBRARY_PATH=${HOME}/cosim/systemc-2.3.2/lib-linux64/  ~/cosim/systemctlm-cosim-demo/zynq_demo  unix:${HOME}/cosim/buildroot/handles/qemu-rport-_cosim@0 1000000
 ```
 
 Start the QEMU instance in the second shell by running (in any directory):
