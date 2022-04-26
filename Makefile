@@ -144,6 +144,7 @@ VERILATOR=verilator
 
 VM_TRACE?=0
 VM_COVERAGE?=0
+VM_SC?=1
 V_LDLIBS += $(VOBJ_DIR)/Vapb_timer__ALL.a
 V_LDLIBS += $(VOBJ_DIR)/Vaxilite_dev__ALL.a
 V_LDLIBS += $(VOBJ_DIR)/Vaxifull_dev__ALL.a
