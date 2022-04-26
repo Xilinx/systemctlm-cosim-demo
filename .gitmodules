@@ -1,9 +1,9 @@
 [submodule "libsystemctlm-soc"]
 	path = libsystemctlm-soc
-	url = ../libsystemctlm-soc.git
+	url = git@github.com:Xilinx/libsystemctlm-soc.git
 [submodule "LMAC_CORE2"]
 	path = LMAC_CORE2
-	url = ../../lewiz-support/LMAC_CORE2.git
+	url = git@github.com:lewiz-support/LMAC_CORE2.git
 [submodule "LMAC_CORE3"]
 	path = LMAC_CORE3
-	url = ../../lewiz-support/LMAC_CORE3.git
+	url = git@github.com:lewiz-support/LMAC_CORE3.git
