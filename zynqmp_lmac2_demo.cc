@@ -124,7 +124,7 @@ SC_MODULE(Top)
 	}
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
-		zynq("zynq", sk_descr, remoteport_tlm_sync_untimed_ptr),
+		zynq("zynq", sk_descr, remoteport_tlm_sync_untimed_ptr, false),
 		dma_mm2s_A("dma_mm2s_A"),
 		dma_s2mm_C("dma_s2mm_C"),
 		tlm2axis("tlm2axis"),
