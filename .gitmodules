@@ -7,3 +7,6 @@
 [submodule "LMAC_CORE3"]
 	path = LMAC_CORE3
 	url = ../../lewiz-support/LMAC_CORE3.git
+[submodule "pcie-model"]
+	path = pcie-model
+	url = ../pcie-model.git
