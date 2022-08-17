@@ -2,6 +2,16 @@
 
 ## Overview
 
+This demo shows an x86 host co-simulating with an attached PCIe MD5 accelerator.
+The x86 host is emulated by QEMU and the PCIe End-point is modelled in
+SystemC.
+
+The PCIe MD5 accelerator contains an Address Translation Cache (ATC) and will
+issue PCIe Address Translation Service (ATS) requests towards the x86 host
+in order to get hold of the Virtual to Physical Adresses translations in
+the hosts IOMMU. This allows the MD5 accelerator to later issue memory
+transactions using already translated addresses.
+
 Instructions for how to run an Ubuntu based guest system with Xilinx QEMU
 together with the pcie-ats-demo demo are found below.
 
@@ -169,6 +179,10 @@ $ sudo lspci -v
 
 For running the VFIO demo applications below commands can be used (more
 detailed information about the commands can be found inside libsystemctlm-soc).
+
+The following VFIO demo application will compute the MD5 digest for a given file,
+in this case the Makefile, using the PCIe MD5 accelerator. This can be compared
+with the results of the hosts md5sum application.
 
 ```
 $ cd ~/github/systemctlm-cosim-demo/
