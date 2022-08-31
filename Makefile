@@ -147,6 +147,7 @@ ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
 VERILATOR_ROOT?=/usr/share/verilator
 VERILATOR=verilator
 
+VM_SC?=1
 VM_TRACE?=0
 VM_COVERAGE?=0
 V_LDLIBS += $(VOBJ_DIR)/Vapb_timer__ALL.a
