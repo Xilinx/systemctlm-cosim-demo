@@ -66,6 +66,10 @@ LDFLAGS  += -L $(SYSTEMC_LIBDIR)
 #LDLIBS += -pthread -Wl,-Bstatic -lsystemc -Wl,-Bdynamic
 LDLIBS   += -pthread -lsystemc
 
+PCIE_MODEL_O = pcie-model/tlm-modules/pcie-controller.o
+PCIE_MODEL_O += pcie-model/tlm-modules/libpcie-callbacks.o
+PCIE_MODEL_CPPFLAGS += -I pcie-model/libpcie/src -I pcie-model/
+
 ZYNQ_TOP_C = zynq_demo.cc
 ZYNQ_TOP_O = $(ZYNQ_TOP_C:.cc=.o)
 ZYNQMP_TOP_C = zynqmp_demo.cc
@@ -88,6 +92,8 @@ PCIE_ACC_MD5SUM_VFIO_C = pcie-ats-demo/pcie-acc-md5sum-vfio.o
 PCIE_ACC_MD5SUM_VFIO_O = $(PCIE_ACC_MD5SUM_VFIO_C:.cc=.o)
 VERSAL_NET_CDX_STUB_C = versal_net_cdx_stub.cc
 VERSAL_NET_CDX_STUB_O = $(VERSAL_NET_CDX_STUB_C:.cc=.o)
+VERSAL_CPM5_QDMA_DEMO_C = pcie/versal/cpm5-qdma-demo.cc
+VERSAL_CPM5_QDMA_DEMO_O = $(VERSAL_CPM5_QDMA_DEMO_C:.cc=.o) $(PCIE_MODEL_O)
 
 ZYNQ_OBJS += $(ZYNQ_TOP_O)
 ZYNQMP_OBJS += $(ZYNQMP_TOP_O)
@@ -100,6 +106,7 @@ PCIE_ATS_DEMO_OBJS += $(PCIE_ATS_DEMO_O)
 TEST_PCIE_ATS_DEMO_VFIO_OBJS += $(TEST_PCIE_ATS_DEMO_VFIO_O)
 PCIE_ACC_MD5SUM_VFIO_OBJS += $(PCIE_ACC_MD5SUM_VFIO_O)
 VERSAL_NET_CDX_STUB_OBJS += $(VERSAL_NET_CDX_STUB_O)
+VERSAL_CPM5_QDMA_DEMO_OBJS += $(VERSAL_CPM5_QDMA_DEMO_O)
 
 # Uncomment to enable use of scml2
 # CPPFLAGS += -I $(SCML_INCLUDE)
@@ -218,6 +225,7 @@ RISCV_VIRT_LMAC3_OBJS += $(OBJS)
 VERSAL_OBJS += $(OBJS)
 PCIE_ATS_DEMO_OBJS += $(OBJS)
 VERSAL_NET_CDX_STUB_OBJS += $(OBJS)
+VERSAL_CPM5_QDMA_DEMO_OBJS += $(OBJS)
 
 TARGET_ZYNQ_DEMO = zynq_demo
 TARGET_ZYNQMP_DEMO = zynqmp_demo
@@ -230,6 +238,7 @@ TARGET_PCIE_ATS_DEMO = pcie-ats-demo/pcie-ats-demo
 TARGET_TEST_PCIE_ATS_DEMO_VFIO = pcie-ats-demo/test-pcie-ats-demo-vfio
 TARGET_VERSAL_NET_CDX_STUB = versal_net_cdx_stub
 PCIE_ACC_MD5SUM_VFIO = pcie-ats-demo/pcie-acc-md5sum-vfio
+TARGET_VERSAL_CPM5_QDMA_DEMO = pcie/versal/cpm5-qdma-demo
 
 IPXACT_LIBS = packages/ipxact
 DEMOS_IPXACT_LIB = $(IPXACT_LIBS)/xilinx.com/demos
@@ -279,6 +288,11 @@ V_LDLIBS += $(VOBJ_DIR)/Vlmac3_wrapper_top__ALL.a
 endif
 endif
 
+PCIE_MODEL_DIR=pcie-model/tlm-modules
+ifneq ($(wildcard $(PCIE_MODEL_DIR)/.),)
+TARGETS += $(TARGET_VERSAL_CPM5_QDMA_DEMO)
+endif
+
 all: $(TARGETS)
 
 -include $(ZYNQ_OBJS:.o=.d)
@@ -291,6 +305,7 @@ all: $(TARGETS)
 -include $(PCIE_ATS_DEMO_OBJS:.o=.d)
 -include $(TEST_PCIE_ATS_DEMO_VFIO_OBJS:.o=.d)
 -include $(PCIE_ACC_MD5SUM_VFIO_OBJS:.o=.d)
+-include $(VERSAL_CPM5_QDMA_DEMO_OBJS:.o=.d)
 CFLAGS += -MMD
 CXXFLAGS += -MMD
 
@@ -382,6 +397,14 @@ $(PCIE_ACC_MD5SUM_VFIO): $(PCIE_ACC_MD5SUM_VFIO_OBJS) $(VERILATED_O)
 $(TARGET_VERSAL_NET_CDX_STUB): $(VERSAL_NET_CDX_STUB_OBJS) $(VTOP_LIB) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
+## libpcie ##
+-include pcie-model/libpcie/libpcie.mk
+
+$(TARGET_VERSAL_CPM5_QDMA_DEMO): CPPFLAGS += $(PCIE_MODEL_CPPFLAGS)
+$(TARGET_VERSAL_CPM5_QDMA_DEMO): LDLIBS += libpcie.a
+$(TARGET_VERSAL_CPM5_QDMA_DEMO): $(VERSAL_CPM5_QDMA_DEMO_OBJS) libpcie.a
+	$(CXX) $(LDFLAGS) -o $@ $(VERSAL_CPM5_QDMA_DEMO_OBJS) $(LDLIBS)
+
 verilated_%.o: $(VERILATOR_ROOT)/include/verilated_%.cpp
 
 clean:
@@ -402,3 +425,5 @@ clean:
 	$(RM) $(PCIE_ACC_MD5SUM_VFIO)
 	$(RM) $(VERSAL_NET_CDX_STUB_OBJS) $(VERSAL_NET_CDX_STUB_OBJS:.o=.d)
 	$(RM) $(TARGET_VERSAL_NET_CDX_STUB)
+	$(RM) $(TARGET_VERSAL_CPM5_QDMA_DEMO) $(VERSAL_CPM5_QDMA_DEMO_OBJS)
+	$(RM) $(VERSAL_CPM5_QDMA_DEMO_OBJS:.o=.d)
