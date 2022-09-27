@@ -50,12 +50,12 @@ mkdir ~/cosim
 ```bash
 # Build and install the binaries
 cd ~/cosim
-wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.2.tar.gz
-tar xf systemc-2.3.2.tar.gz
-cd systemc-2.3.2/
-CXXFLAGS=-std=c++11 ./configure
+wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.3.tar.gz
+tar xf systemc-2.3.3.tar.gz
+cd systemc-2.3.3/
+CXXFLAGS=-std=c++11 ./configure --prefix=${HOME}/cosim/
 make
-sudo make install
+make install
 ```
 
 ### QEMU Setup
@@ -64,12 +64,12 @@ sudo make install
 cd ~/cosim
 git clone https://github.com/Xilinx/qemu.git
 cd qemu
-git checkout 303b509ec23138c43be8a371
+git checkout 74d70f8008
 
 # Configure and build
-./configure --target-list="arm-softmmu,aarch64-softmmu,microblazeel-softmmu" --enable-fdt --disable-kvm --disable-xen
+./configure --target-list="arm-softmmu,aarch64-softmmu,microblazeel-softmmu,riscv32-softmmu,riscv64-softmmu,x86_64-softmmu" --enable-fdt --disable-kvm --disable-xen
 make -j$((`nproc`+1))
-sudo make install
+make install DESTDIR=${HOME}/cosim/
 ```
 
 ### Demo Setup
@@ -84,7 +84,7 @@ git submodule update --init libsystemctlm-soc
 # Create the Makefile configeration
 cat << EOF | tee .config.mk
 CXXFLAGS=-std=c++11
-SYSTEMC=${HOME}/cosim/systemc-2.3.2
+SYSTEMC=${HOME}/cosim/
 HAVE_VERILOG=n
 HAVE_VERILOG_VERILATOR=y
 HAVE_VERILOG_VCS=y
@@ -157,13 +157,13 @@ for QEMU and the other for SystemC. In the first shell run the command
 below to start the SystemC simulation:
 
 ```bash
-LD_LIBRARY_PATH=${HOME}/cosim/systemc-2.3.2/lib-linux64/ ~/cosim/systemctlm-cosim-demo/zynq_demo unix:${HOME}/cosim/buildroot/handles/qemu-rport-_cosim@0 1000000
+LD_LIBRARY_PATH=${HOME}/cosim/lib-linux64/ ~/cosim/systemctlm-cosim-demo/zynq_demo unix:${HOME}/cosim/buildroot/handles/qemu-rport-_cosim@0 1000000
 ```
 
 Start the QEMU instance in the second shell by running (in any directory):
 
 ```bash
-${HOME}/cosim/qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -m 1G -kernel ${HOME}/cosim/buildroot/output/images/uImage -dtb ${HOME}/cosim/buildroot/output/images/zynq-zc702.dtb --initrd ${HOME}/cosim/buildroot/output/images/rootfs.cpio.gz -serial /dev/null -serial mon:stdio -display none -net nic -net nic -net user -machine-path ${HOME}/cosim/buildroot/handles -icount 0,sleep=off -rtc clock=vm -sync-quantum 1000000
+${HOME}/cosim/usr/local/bin/qemu-system-aarch64 -M arm-generic-fdt-7series -m 1G -kernel ${HOME}/cosim/buildroot/output/images/uImage -dtb ${HOME}/cosim/buildroot/output/images/zynq-zc702.dtb --initrd ${HOME}/cosim/buildroot/output/images/rootfs.cpio.gz -serial /dev/null -serial mon:stdio -display none -net nic -net nic -net user -machine-path ${HOME}/cosim/buildroot/handles -icount 0,sleep=off -rtc clock=vm -sync-quantum 1000000
 ```
 
 ## Example Output
