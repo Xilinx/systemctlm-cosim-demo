@@ -11,6 +11,12 @@ together with the cpm5-qdma-demo are found below. The instructions also
 demonstrate how to exercise the CPM5 QDMA model with Xilinx open source QDMA
 driver and userspace applications from inside the Ubuntu guest system.
 
+## Build SystemC 2.3.3 and Xilinx QEMU
+
+Follow the instructions on how to build Acelleras SystemC library and Xilinx
+QEMU found in the
+[zynq-7000-getting-started-guide](../../docs/zynq-7000-getting-started-guide.md#systemc-setup).
+
 ## Build the cpm5-qdma-demo
 
 Download and build the cpm5-qdma-demo by following below instructions.
@@ -21,7 +27,7 @@ $ cd systemctlm-cosim-demo
 $ git submodule update --init libsystemctlm-soc
 $ git submodule update --init pcie-model
 $ cat <<EOF > .config.mk
-SYSTEMC = /path/to/systemc-2.3.2/
+SYSTEMC = /path/to/systemc-2.3.3/
 EOF
 $ make pcie/versal/cpm5-qdma-demo
 ```
@@ -89,7 +95,7 @@ Launch the cpm5-qdma-demo in a second terminal:
 
 ```
 $ cd systemctlm-cosim-demo
-$ LD_LIBRARY_PATH=/path/to/systemc-2.3.2/lib-linux64/ ./pcie/versal/cpm5-qdma-demo unix:/tmp/machine-x86/qemu-rport-_machine_peripheral_rp0_rp 10000
+$ LD_LIBRARY_PATH=/path/to/systemc-2.3.3/lib-linux64/ ./pcie/versal/cpm5-qdma-demo unix:/tmp/machine-x86/qemu-rport-_machine_peripheral_rp0_rp 10000
 ```
 
 ## Build the QDMA driver in the Ubuntu cloud image
