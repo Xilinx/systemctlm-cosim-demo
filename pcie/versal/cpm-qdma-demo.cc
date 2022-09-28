@@ -65,17 +65,24 @@ using namespace std;
 #define NR_MMIO_BAR  6
 #define NR_IRQ       NR_QDMA_IRQ
 
-class pcie_qdma_cpm5 : public pci_device_base
+#ifdef QDMA_CPM4_VERSION
+#define QDMA_TYPE qdma_cpm4
+#else
+#define QDMA_TYPE qdma_cpm5
+#endif
+
+template<typename QDMA_t>
+class pcie_versal : public pci_device_base
 {
 private:
-	qdma_cpm5 qdma;
+	QDMA_t qdma;
 
 	// BARs towards the QDMA
-	tlm_utils::simple_initiator_socket<pcie_qdma_cpm5> user_bar_init_socket;
-	tlm_utils::simple_initiator_socket<pcie_qdma_cpm5> cfg_init_socket;
+	tlm_utils::simple_initiator_socket<pcie_versal> user_bar_init_socket;
+	tlm_utils::simple_initiator_socket<pcie_versal> cfg_init_socket;
 
 	// QDMA towards PCIe interface (host)
-	tlm_utils::simple_target_socket<pcie_qdma_cpm5> brdg_dma_tgt_socket;
+	tlm_utils::simple_target_socket<pcie_versal> brdg_dma_tgt_socket;
 
 	// MSI-X propagation
 	sc_vector<sc_signal<bool> > signals_irq;
@@ -100,7 +107,7 @@ private:
 				cfg_init_socket->b_transport(trans, delay);
 				break;
 			default:
-				SC_REPORT_ERROR("pcie_qdma_cpm5",
+				SC_REPORT_ERROR("pcie_versal",
 					"writing to an unimplemented bar");
 				trans.set_response_status(
 					tlm::TLM_GENERIC_ERROR_RESPONSE);
@@ -129,13 +136,13 @@ private:
 	}
 
 public:
-	SC_HAS_PROCESS(pcie_qdma_cpm5);
+	SC_HAS_PROCESS(pcie_versal);
 
-	pcie_qdma_cpm5(sc_core::sc_module_name name) :
+	pcie_versal(sc_core::sc_module_name name) :
 
 		pci_device_base(name, NR_MMIO_BAR, NR_IRQ),
 
-		qdma("qdma-cpm5"),
+		qdma("qdma"),
 
 		user_bar_init_socket("user_bar_init_socket"),
 		cfg_init_socket("cfg_init_socket"),
@@ -155,7 +162,7 @@ public:
 		// Setup DMA forwarding path (qdma.dma -> upstream to host)
 		qdma.dma.bind(brdg_dma_tgt_socket);
 		brdg_dma_tgt_socket.register_b_transport(
-			this, &pcie_qdma_cpm5::fwd_dma_b_transport);
+			this, &pcie_versal::fwd_dma_b_transport);
 
 		// Connect the SBI dummy RAM
 		bus.memmap(0x102100000ULL, 0x1000 - 1,
@@ -165,7 +172,7 @@ public:
 		// Setup MSI-X propagation
 		for (unsigned int i = 0; i < NR_IRQ; i++) {
 			qdma.irq[i](signals_irq[i]);
-			sc_spawn(sc_bind(&pcie_qdma_cpm5::irq_thread, this, i));
+			sc_spawn(sc_bind(&pcie_versal::irq_thread, this, i));
 		}
 	}
 
@@ -229,7 +236,7 @@ public:
 	pcie_root_port pcie_rp;
 
 	PCIeController pcie_ctlr;
-	pcie_qdma_cpm5 qdma;
+	pcie_versal<QDMA_TYPE> qdma;
 
 	//
 	// Reset signal.
