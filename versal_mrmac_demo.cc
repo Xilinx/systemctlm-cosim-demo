@@ -182,6 +182,7 @@ int sc_main(int argc, char* argv[])
 		sc_start(1, SC_PS);
 		sc_stop();
 		usage();
+		delete top;
 		exit(EXIT_FAILURE);
 	}
 
