@@ -25,11 +25,11 @@ Make sure to have installed required systemctlm-cosim-demo dependencies listed
 in the project [README](../../README).
 
 ```
-$ sudo apt-get install linux-libc-dev
+$ sudo apt-get install libpci-dev linux-libc-dev
 ```
 
 Download and build the cpm5-qdma-demo and cpm4-qdma-demo by following
-below instructions.
+the following instructions.
 
 ```
 $ git clone https://github.com/Xilinx/systemctlm-cosim-demo.git
