@@ -227,13 +227,38 @@ PhysFuncConfig getPhysFuncConfig()
 	return cfg;
 }
 
+// Host / PCIe RC
+//
+// This pcie_host uses Remote-port to connect to a QEMU PCIe RC.
+// If you'd like to connect this demo to something else, you need
+// to replace this implementation with the host model you've got.
+//
+SC_MODULE(pcie_host)
+{
+private:
+	remoteport_tlm_pci_ep rp_pci_ep;
+
+public:
+	pcie_root_port rootport;
+	sc_in<bool> rst;
+
+	pcie_host(sc_module_name name, const char *sk_descr) :
+		sc_module(name),
+		rp_pci_ep("rp-pci-ep", 0, 1, 0, sk_descr),
+		rootport("rootport"),
+		rst("rst")
+	{
+		rp_pci_ep.rst(rst);
+		rp_pci_ep.bind(rootport);
+	}
+};
+
 SC_MODULE(Top)
 {
 public:
 	SC_HAS_PROCESS(Top);
 
-	remoteport_tlm_pci_ep rp_pci_ep;
-	pcie_root_port pcie_rp;
+	pcie_host host;
 
 	PCIeController pcie_ctlr;
 	pcie_versal<QDMA_TYPE> qdma;
@@ -245,22 +270,16 @@ public:
 
 	Top(sc_module_name name, const char *sk_descr, sc_time quantum) :
 		sc_module(name),
-		rp_pci_ep("rp-pci-ep", 0, 1, 0, sk_descr),
-		pcie_rp("pcie-rootport"),
+		host("host", sk_descr),
 		pcie_ctlr("pcie-ctlr", getPhysFuncConfig()),
 		qdma("pcie-qdma"),
 		rst("rst")
 	{
 		m_qk.set_global_quantum(quantum);
 
-		rp_pci_ep.rst(rst);
-		rp_pci_ep.bind(pcie_rp);
-
-		//
-		// Setup TLP sockets (pcie_rp <-> pcie-ctlr)
-		//
-		pcie_rp.init_socket.bind(pcie_ctlr.tgt_socket);
-		pcie_ctlr.init_socket.bind(pcie_rp.tgt_socket);
+		// Setup TLP sockets (host.rootport <-> pcie-ctlr)
+		host.rootport.init_socket.bind(pcie_ctlr.tgt_socket);
+		pcie_ctlr.init_socket.bind(host.rootport.tgt_socket);
 
 		//
 		// PCIeController <-> QDMA connections
@@ -268,6 +287,7 @@ public:
 		pcie_ctlr.bind(qdma);
 
 		// Reset signal
+		host.rst(rst);
 		qdma.rst(rst);
 
 		SC_THREAD(pull_reset);
