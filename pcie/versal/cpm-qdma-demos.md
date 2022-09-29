@@ -21,6 +21,13 @@ QEMU found in the
 
 ## Build the cpm5-qdma-demo and cpm4-qdma-demo
 
+Make sure to have installed required systemctlm-cosim-demo dependencies listed
+in the project [README](../../README).
+
+```
+$ sudo apt-get install linux-libc-dev
+```
+
 Download and build the cpm5-qdma-demo and cpm4-qdma-demo by following
 below instructions.
 
