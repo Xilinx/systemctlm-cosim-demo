@@ -38,6 +38,12 @@ correct directory by setting the variables SYSTEMC.
 You will also need to clone the libremote-port submodule, by running:
     $ git submodule update --init libsystemctlm-soc
 
+Also make sure to have the <linux/pci_regs.h> and <pci/pci.h> headers in
+the default search directory list for your version of CPP (the headers are
+required by the pcie-model submodule). On a Ubuntu LTS system the headers
+can be installed through the `libpci-dev` and `linux-libc-dev` packages.
+    $ sudo apt-get install libpci-dev linux-libc-dev
+
 Once everything is installed you can just run make. If SystemC is in
 a different directory then mentioned about you will need to specify the
 directory by setting the variables mentioned above.
