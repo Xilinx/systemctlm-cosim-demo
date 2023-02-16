@@ -42,7 +42,7 @@ using namespace sc_dt;
 using namespace std;
 
 #include "trace.h"
-#include "iconnect.h"
+#include "soc/interconnect/iconnect.h"
 #include "tests/test-modules/memory.h"
 #include "soc/xilinx/versal/xilinx-versal.h"
 #include "soc/net/ethernet/xilinx/mrmac/mrmac.h"

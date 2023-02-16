@@ -41,7 +41,7 @@ using namespace std;
 #define HAVE_VERILOG
 #define HAVE_VERILOG_VCS
 #include "sysc_verilog_top.h"
-#include "iconnect.h"
+#include "soc/interconnect/iconnect.h"
 #include "debugdev.h"
 #include "demo-dma.h"
 #include "xilinx-zynqmp.h"

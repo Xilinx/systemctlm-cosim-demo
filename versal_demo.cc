@@ -40,7 +40,7 @@ using namespace sc_dt;
 using namespace std;
 
 #include "trace.h"
-#include "iconnect.h"
+#include "soc/interconnect/iconnect.h"
 #include "tests/test-modules/memory.h"
 #include "debugdev.h"
 #include "demo-dma.h"

@@ -40,7 +40,7 @@ using namespace sc_dt;
 using namespace std;
 
 #include "trace.h"
-#include "iconnect.h"
+#include "soc/interconnect/iconnect.h"
 #include "debugdev.h"
 #include "soc/xilinx/zynq/xilinx-zynq.h"
 
