@@ -10,3 +10,6 @@
 [submodule "pcie-model"]
 	path = pcie-model
 	url = ../pcie-model.git
+[submodule "ethmac"]
+	path = ethmac
+	url = git@github.com:freecores/ethmac.git
