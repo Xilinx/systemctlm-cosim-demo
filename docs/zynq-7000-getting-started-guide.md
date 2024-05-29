@@ -111,7 +111,7 @@ Zynq-7000 SoC.
 ```bash
 # Pull the .dtsi files for the Zynq-7000
 wget https://raw.githubusercontent.com/Xilinx/qemu-devicetrees/master/zynq-pl-remoteport.dtsi
-wget https://raw.githubusercontent.com/Xilinx/linux-xlnx/master/arch/arm/boot/dts/zynq-7000.dtsi
+wget https://raw.githubusercontent.com/Xilinx/linux-xlnx/master/arch/arm/boot/dts/xilinx/zynq-7000.dtsi
 # kernel 5.4.75 zynq-zc702.dts
 wget https://raw.githubusercontent.com/torvalds/linux/6e97ed6efa701db070da0054b055c085895aba86/arch/arm/boot/dts/zynq-zc702.dts
 # Include zynq-pl-remoteport.dtsi in zynq-zc702.dts
