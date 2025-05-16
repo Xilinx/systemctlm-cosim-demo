@@ -77,7 +77,8 @@ void debugdev::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 				v = now.to_seconds() * 1000 * 1000 * 1000;
 				break;
 			case 0xc:
-				v = irq.read();
+				v = irq[0].read();
+				v |= irq[1].read() << 1;
 				break;
 			case 0x10:
 				v = clock();
@@ -114,7 +115,8 @@ void debugdev::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 				exit(1);
 				break;
 			case 0xc:
-				irq.write(data[0] & 1);
+				irq[0].write(data[0] & 1);
+				irq[1].write((data[0] & 2) >> 1);
 				break;
 			case 0xf0:
 				trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
@@ -134,4 +136,14 @@ unsigned int debugdev::transport_dbg(tlm::tlm_generic_payload& trans)
 {
 	unsigned int len = trans.get_data_length();
 	return len;
+}
+
+void debugdev::before_end_of_elaboration()
+{
+	for (int i = 0; i < NUM_DBG_IRQ; i++) {
+		if (irq[i].size() == 0) {
+			cout << "irq: " << i << " tied off" << endl;
+			irq[i](irq_tieoff[i]);
+		}
+	}
 }

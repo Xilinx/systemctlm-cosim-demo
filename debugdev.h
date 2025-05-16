@@ -21,15 +21,22 @@
  * THE SOFTWARE.
  */
 
+#define NUM_DBG_IRQ 2
+
 class debugdev
 : public sc_core::sc_module
 {
 public:
 	tlm_utils::simple_target_socket<debugdev> socket;
-	sc_out<bool> irq;
+	sc_out<bool> irq[NUM_DBG_IRQ];
 
 	debugdev(sc_core::sc_module_name name);
 	virtual void b_transport(tlm::tlm_generic_payload& trans,
 					sc_time& delay);
 	virtual unsigned int transport_dbg(tlm::tlm_generic_payload& trans);
+
+	void before_end_of_elaboration();
+
+private:
+	sc_signal<bool> irq_tieoff[NUM_DBG_IRQ];
 };

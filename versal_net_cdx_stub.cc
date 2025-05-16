@@ -231,7 +231,7 @@ SC_MODULE(Top)
 		cdma1.init_socket(smid_cdma1.tgt_socket);
 
 		/* Connect the PL irqs to the irq_pl_to_ps wires.  */
-		debugdev_cpm.irq(versal_net.pl2ps_irq[0]);
+		debugdev_cpm.irq[0](versal_net.pl2ps_irq[0]);
 
 		/* Tie off any remaining unconnected signals.  */
 		versal_net.tie_off();

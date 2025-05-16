@@ -79,7 +79,7 @@ SC_MODULE(Top)
 		zynq.m_axi_gp[0]->bind(*(bus.t_sk[0]));
 
 		/* Connect the PL irqs to the irq_pl_to_ps wires.  */
-		debug.irq(zynq.pl2ps_irq[0]);
+		debug.irq[0](zynq.pl2ps_irq[0]);
 
 		/* Tie off any remaining unconnected signals.  */
 		zynq.tie_off();

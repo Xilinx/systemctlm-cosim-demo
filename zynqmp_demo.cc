@@ -354,7 +354,7 @@ SC_MODULE(Top)
 			dma[i]->irq(zynq.pl2ps_irq[1 + i]);
 		}
 
-		debug.irq(zynq.pl2ps_irq[0]);
+		debug.irq[0](zynq.pl2ps_irq[0]);
 
 #ifdef HAVE_VERILOG
 		/* Slow clock to keep simulation fast.  */

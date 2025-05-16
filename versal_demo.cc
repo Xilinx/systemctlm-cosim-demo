@@ -371,7 +371,8 @@ SC_MODULE(Top)
 
 		dma->init_socket.bind(*(bus->t_sk[5]));
 
-		debug->irq(versal.pl2ps_irq[0]);
+		debug->irq[0](versal.pl2ps_irq[0]);
+		debug->irq[1](versal.npi_irq[0]);
 		dma->irq(versal.pl2ps_irq[1]);
 
 #ifdef HAVE_VERILOG
