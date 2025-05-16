@@ -84,6 +84,8 @@ VERSAL_MRMAC_TOP_C = versal_mrmac_demo.cc
 VERSAL_MRMAC_TOP_O = $(VERSAL_MRMAC_TOP_C:.cc=.o)
 VERSAL_TOP_C = versal_demo.cc
 VERSAL_TOP_O = $(VERSAL_TOP_C:.cc=.o)
+VERSAL2_TOP_C = amd_versal2_demo.cc
+VERSAL2_TOP_O = $(VERSAL2_TOP_C:.cc=.o)
 PCIE_ATS_DEMO_C = pcie-ats-demo/pcie-ats-demo.cc
 PCIE_ATS_DEMO_O = $(PCIE_ATS_DEMO_C:.cc=.o)
 TEST_PCIE_ATS_DEMO_VFIO_C = pcie-ats-demo/test-pcie-ats-demo-vfio.o
@@ -103,6 +105,7 @@ VERSAL_MRMAC_OBJS += $(VERSAL_MRMAC_TOP_O)
 RISCV_VIRT_LMAC2_OBJS += $(RISCV_VIRT_LMAC2_TOP_O)
 RISCV_VIRT_LMAC3_OBJS += $(RISCV_VIRT_LMAC3_TOP_O)
 VERSAL_OBJS += $(VERSAL_TOP_O)
+VERSAL2_OBJS += $(VERSAL2_TOP_O)
 PCIE_ATS_DEMO_OBJS += $(PCIE_ATS_DEMO_O)
 TEST_PCIE_ATS_DEMO_VFIO_OBJS += $(TEST_PCIE_ATS_DEMO_VFIO_O)
 PCIE_ACC_MD5SUM_VFIO_OBJS += $(PCIE_ACC_MD5SUM_VFIO_O)
@@ -134,11 +137,16 @@ CPPFLAGS += -I $(LIBSOC_ZYNQMP_PATH)
 CPPFLAGS += -I $(LIBSOC_PATH)/soc/xilinx/versal/
 SC_OBJS += $(LIBSOC_PATH)/soc/xilinx/versal/xilinx-versal.o
 
+CPPFLAGS += -I $(LIBSOC_PATH)/soc/amd/amd-versal2/
+SC_OBJS += $(LIBSOC_PATH)/soc/amd/amd-versal2/amd-versal2.o
+
 CPPFLAGS += -I $(LIBSOC_PATH)/soc/xilinx/versal-net/
 SC_OBJS += $(LIBSOC_PATH)/soc/xilinx/versal-net/xilinx-versal-net.o
 
 CPPFLAGS += -I $(LIBSOC_PATH)/tests/test-modules/
 SC_OBJS += $(LIBSOC_PATH)/tests/test-modules/memory.o
+SC_OBJS += $(LIBSOC_PATH)/tests/test-modules/wire-loopback.o
+SC_OBJS += $(LIBSOC_PATH)/tests/test-modules/wiredev.o
 
 LIBRP_PATH=$(LIBSOC_PATH)/libremote-port
 C_OBJS += $(LIBRP_PATH)/safeio.o
@@ -225,6 +233,7 @@ VERSAL_MRMAC_OBJS += $(OBJS)
 RISCV_VIRT_LMAC2_OBJS += $(OBJS)
 RISCV_VIRT_LMAC3_OBJS += $(OBJS)
 VERSAL_OBJS += $(OBJS)
+VERSAL2_OBJS += $(OBJS)
 PCIE_ATS_DEMO_OBJS += $(OBJS)
 VERSAL_NET_CDX_STUB_OBJS += $(OBJS)
 VERSAL_CPM4_QDMA_DEMO_OBJS += $(OBJS)
@@ -237,6 +246,7 @@ TARGET_VERSAL_MRMAC_DEMO = versal_mrmac_demo
 TARGET_RISCV_VIRT_LMAC2_DEMO = riscv_virt_lmac2_demo
 TARGET_RISCV_VIRT_LMAC3_DEMO = riscv_virt_lmac3_demo
 TARGET_VERSAL_DEMO = versal_demo
+TARGET_VERSAL2_DEMO = amd_versal2_demo
 TARGET_PCIE_ATS_DEMO = pcie-ats-demo/pcie-ats-demo
 TARGET_TEST_PCIE_ATS_DEMO_VFIO = pcie-ats-demo/test-pcie-ats-demo-vfio
 TARGET_VERSAL_NET_CDX_STUB = versal_net_cdx_stub
@@ -258,6 +268,7 @@ PYSIMGEN_ARGS += -o $(ZL_IPXACT_DEMO_OUTDIR)
 PYSIMGEN_ARGS += --build --quiet
 
 TARGETS = $(TARGET_ZYNQ_DEMO) $(TARGET_ZYNQMP_DEMO) $(TARGET_VERSAL_DEMO) $(TARGET_VERSAL_MRMAC_DEMO)
+TARGETS += $(TARGET_VERSAL2_DEMO)
 TARGETS += $(TARGET_VERSAL_NET_CDX_STUB)
 
 ifeq "$(HAVE_VERILOG_VERILATOR)" "y"
@@ -307,6 +318,7 @@ all: $(TARGETS)
 -include $(RISCV_VIRT_LMAC2_OBJS:.o=.d)
 -include $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 -include $(VERSAL_OBJS:.o=.d)
+-include $(VERSAL2_OBJS:.o=.d)
 -include $(PCIE_ATS_DEMO_OBJS:.o=.d)
 -include $(TEST_PCIE_ATS_DEMO_VFIO_OBJS:.o=.d)
 -include $(PCIE_ACC_MD5SUM_VFIO_OBJS:.o=.d)
@@ -390,6 +402,9 @@ $(TARGET_ZYNQ_DEMO): $(ZYNQ_OBJS) $(VTOP_LIB) $(VERILATED_O)
 $(TARGET_VERSAL_DEMO): $(VERSAL_OBJS) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $(VERSAL_OBJS) $(VERILATED_O) $(LDLIBS)
 
+$(TARGET_VERSAL2_DEMO): $(VERSAL2_OBJS) $(VERILATED_O)
+	$(CXX) $(LDFLAGS) -o $@ $(VERSAL2_OBJS) $(VERILATED_O) $(LDLIBS)
+
 $(TARGET_PCIE_ATS_DEMO): LDLIBS += -lcrypto
 $(TARGET_PCIE_ATS_DEMO): $(PCIE_ATS_DEMO_OBJS) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $(PCIE_ATS_DEMO_OBJS) $(VERILATED_O) $(LDLIBS)
@@ -430,6 +445,7 @@ clean:
 	$(RM) $(ZYNQMP_OBJS) $(ZYNQMP_OBJS:.o=.d)
 	$(RM) $(ZYNQMP_LMAC2_OBJS) $(ZYNQMP_LMAC2_OBJS:.o=.d)
 	$(RM) $(VERSAL_OBJS) $(VERSAL_OBJS:.o=.d)
+	$(RM) $(VERSAL2_OBJS) $(VERSAL2_OBJS:.o=.d)
 	$(RM) $(VERSAL_MRMAC_OBJS) $(VERSAL_MRMAC_OBJS:.o=.d)
 	$(RM) $(RISCV_VIRT_LMAC2_OBJS) $(RISCV_VIRT_LMAC2_OBJS:.o=.d)
 	$(RM) $(RISCV_VIRT_LMAC3_OBJS) $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
