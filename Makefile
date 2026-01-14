@@ -346,6 +346,16 @@ $(RISCV_VIRT_LMAC3_TOP_O): $(V_LDLIBS)
 $(ZYNQMP_TOP_O): $(V_LDLIBS)
 $(VERILATED_O): $(V_LDLIBS)
 
+# Verilator 5.x
+VERILATED_A=$(VOBJ_DIR)/libverilated.a
+LDLIBS += $(VERILATED_A)
+
+# Backport for older than 5.x
+$(TARGETS): $(VERILATED_A)
+
+$(VERILATED_A): $(VERILATED_O)
+	$(AR) -crs $@ $^
+
 $(VOBJ_DIR)/V%__ALL.a: %.v
 	$(VENV) $(VERILATOR) $(VFLAGS) $<
 	$(MAKE) -C $(VOBJ_DIR) CXXFLAGS="$(CXXFLAGS)" -f V$(<:.v=.mk)
