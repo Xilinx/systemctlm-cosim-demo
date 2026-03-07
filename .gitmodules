@@ -3,10 +3,10 @@
 	url = ../libsystemctlm-soc.git
 [submodule "LMAC_CORE2"]
 	path = LMAC_CORE2
-	url = ../../lewiz-support/LMAC_CORE2.git
+	url = https://github.com/lewiz-support/LMAC_CORE2.git
 [submodule "LMAC_CORE3"]
 	path = LMAC_CORE3
-	url = ../../lewiz-support/LMAC_CORE3.git
+	url = https://github.com/lewiz-support/LMAC_CORE3.git
 [submodule "pcie-model"]
 	path = pcie-model
-	url = ../pcie-model.git
+	url = https://github.com/Xilinx/pcie-model.git
