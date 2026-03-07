@@ -54,6 +54,16 @@ There are other options that can be set, e.g:
     HAVE_VERILOG_VERILATOR=n
     HAVE_VERILOG_VCS=n
 
+When your project uses both SystemC and SystemC TLM from 2.x.x releases,
+you may encounter the following warning messages:
+
+warning: ‘void sc_core::sc_port_b<IF>::bind(port_type&) [with IF = tlm::tlm_fw_transport_if<>; port_type = sc_core::sc_port_b<tlm::tlm_fw_transport_if<> >]’ was hidden [-Woverloaded-virtual=]
+
+This is a known problem and has been addressed by SystemC 3.x.x releases.
+To suppress these warning messages, add the following line to your .config.mk
+(see Configuration above)
+    CPPFLAGS += -isystem $(SYSTEMC)/include
+
 RUN
 ---------------------------------------
 When running you will need to make sure the program can link to your
