@@ -120,13 +120,15 @@ VERSAL_CPM5_QDMA_DEMO_OBJS += $(VERSAL_CPM5_QDMA_DEMO_O) $(PCIE_MODEL_O)
 # LDFLAGS += -L $(SCML_LIBDIR)
 # LDLIBS += -lscml2 -lscml2_logging
 
-SC_OBJS += trace.o
 SC_OBJS += debugdev.o
 SC_OBJS += demo-dma.o
 SC_OBJS += xilinx-axidma.o
 
 LIBSOC_PATH=libsystemctlm-soc
 CPPFLAGS += -I $(LIBSOC_PATH)
+
+CPPFLAGS += -I $(LIBSOC_PATH)/trace
+SC_OBJS += $(LIBSOC_PATH)/trace/trace.o
 
 LIBSOC_ZYNQ_PATH=$(LIBSOC_PATH)/soc/xilinx/zynq
 SC_OBJS += $(LIBSOC_ZYNQ_PATH)/xilinx-zynq.o
