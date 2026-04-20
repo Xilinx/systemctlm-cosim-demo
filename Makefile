@@ -85,6 +85,8 @@ RISCV_VIRT_LMAC3_TOP_C = riscv_virt_lmac3_demo.cc
 RISCV_VIRT_LMAC3_TOP_O = $(RISCV_VIRT_LMAC3_TOP_C:.cc=.o)
 VERSAL_MRMAC_TOP_C = versal_mrmac_demo.cc
 VERSAL_MRMAC_TOP_O = $(VERSAL_MRMAC_TOP_C:.cc=.o)
+VERSAL_DCMAC_TOP_C = versal-dcmac-demo/versal_dcmac_demo.cc
+VERSAL_DCMAC_TOP_O = $(VERSAL_DCMAC_TOP_C:.cc=.o)
 VERSAL_TOP_C = versal_demo.cc
 VERSAL_TOP_O = $(VERSAL_TOP_C:.cc=.o)
 VERSAL2_TOP_C = amd_versal2_demo.cc
@@ -105,6 +107,7 @@ ZYNQ_OBJS += $(ZYNQ_TOP_O)
 ZYNQMP_OBJS += $(ZYNQMP_TOP_O)
 ZYNQMP_LMAC2_OBJS += $(ZYNQMP_LMAC2_TOP_O)
 VERSAL_MRMAC_OBJS += $(VERSAL_MRMAC_TOP_O)
+VERSAL_DCMAC_OBJS += $(VERSAL_DCMAC_TOP_O)
 RISCV_VIRT_LMAC2_OBJS += $(RISCV_VIRT_LMAC2_TOP_O)
 RISCV_VIRT_LMAC3_OBJS += $(RISCV_VIRT_LMAC3_TOP_O)
 VERSAL_OBJS += $(VERSAL_TOP_O)
@@ -164,8 +167,11 @@ SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-wires.o
 SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-ats.o
 SC_OBJS += $(LIBRP_PATH)/remote-port-tlm-pci-ep.o
 SC_OBJS += $(LIBSOC_PATH)/soc/pci/core/pci-device-base.o
+SC_OBJS += $(LIBSOC_PATH)/soc/dma/amd/axidma/axidma.o
 SC_OBJS += $(LIBSOC_PATH)/soc/dma/xilinx/mcdma/mcdma.o
 SC_OBJS += $(LIBSOC_PATH)/soc/net/ethernet/xilinx/mrmac/mrmac.o
+SC_OBJS += $(LIBSOC_PATH)/soc/net/ethernet/amd/dcmac/dcmac-eth.o
+SC_OBJS += $(LIBSOC_PATH)/soc/net/ethernet/amd/dcmac/dcmac-ethmac.o
 CPPFLAGS += -I $(LIBRP_PATH)
 
 VENV=SYSTEMC_INCLUDE=$(SYSTEMC_INCLUDE) SYSTEMC_LIBDIR=$(SYSTEMC_LIBDIR)
@@ -235,6 +241,7 @@ ZYNQ_OBJS += $(OBJS)
 ZYNQMP_OBJS += $(OBJS)
 ZYNQMP_LMAC2_OBJS += $(OBJS)
 VERSAL_MRMAC_OBJS += $(OBJS)
+VERSAL_DCMAC_OBJS += $(OBJS)
 RISCV_VIRT_LMAC2_OBJS += $(OBJS)
 RISCV_VIRT_LMAC3_OBJS += $(OBJS)
 VERSAL_OBJS += $(OBJS)
@@ -248,6 +255,7 @@ TARGET_ZYNQ_DEMO = zynq_demo
 TARGET_ZYNQMP_DEMO = zynqmp_demo
 TARGET_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo
 TARGET_VERSAL_MRMAC_DEMO = versal_mrmac_demo
+TARGET_VERSAL_DCMAC_DEMO = versal-dcmac-demo/versal_dcmac_demo
 TARGET_RISCV_VIRT_LMAC2_DEMO = riscv_virt_lmac2_demo
 TARGET_RISCV_VIRT_LMAC3_DEMO = riscv_virt_lmac3_demo
 TARGET_VERSAL_DEMO = versal_demo
@@ -273,6 +281,7 @@ PYSIMGEN_ARGS += -o $(ZL_IPXACT_DEMO_OUTDIR)
 PYSIMGEN_ARGS += --build --quiet
 
 TARGETS = $(TARGET_ZYNQ_DEMO) $(TARGET_ZYNQMP_DEMO) $(TARGET_VERSAL_DEMO) $(TARGET_VERSAL_MRMAC_DEMO)
+TARGETS += $(TARGET_VERSAL_DCMAC_DEMO)
 TARGETS += $(TARGET_VERSAL2_DEMO)
 TARGETS += $(TARGET_VERSAL_NET_CDX_STUB)
 
@@ -320,6 +329,7 @@ all: $(TARGETS)
 -include $(ZYNQMP_OBJS:.o=.d)
 -include $(ZYNQMP_LMAC2_OBJS:.o=.d)
 -include $(VERSAL_MRMAC_OBJS:.o=.d)
+-include $(VERSAL_DCMAC_OBJS:.o=.d)
 -include $(RISCV_VIRT_LMAC2_OBJS:.o=.d)
 -include $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 -include $(VERSAL_OBJS:.o=.d)
@@ -398,6 +408,9 @@ $(TARGET_ZYNQMP_LMAC2_DEMO): $(ZYNQMP_LMAC2_OBJS) $(VTOP_LIB) $(VERILATED_O)
 $(TARGET_VERSAL_MRMAC_DEMO): $(VERSAL_MRMAC_OBJS) $(VTOP_LIB) $(VERILATED_O)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
+$(TARGET_VERSAL_DCMAC_DEMO): $(VERSAL_DCMAC_OBJS) $(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
 $(TARGET_ZYNQMP_LMAC2_IPXACT_DEMO):
 	$(INSTALL) -d $(ZL_IPXACT_DEMO_OUTDIR)
 	[ ! -e .config.mk ] || $(INSTALL) .config.mk $(ZL_IPXACT_DEMO_OUTDIR)
@@ -462,6 +475,7 @@ clean:
 	$(RM) $(VERSAL_OBJS) $(VERSAL_OBJS:.o=.d)
 	$(RM) $(VERSAL2_OBJS) $(VERSAL2_OBJS:.o=.d)
 	$(RM) $(VERSAL_MRMAC_OBJS) $(VERSAL_MRMAC_OBJS:.o=.d)
+	$(RM) $(VERSAL_DCMAC_OBJS) $(VERSAL_DCMAC_OBJS:.o=.d)
 	$(RM) $(RISCV_VIRT_LMAC2_OBJS) $(RISCV_VIRT_LMAC2_OBJS:.o=.d)
 	$(RM) $(RISCV_VIRT_LMAC3_OBJS) $(RISCV_VIRT_LMAC3_OBJS:.o=.d)
 	$(RM) -r $(VOBJ_DIR) $(CSRC_DIR) *.daidir
