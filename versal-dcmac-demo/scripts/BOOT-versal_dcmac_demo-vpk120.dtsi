@@ -1,0 +1,333 @@
+/*
+ * Linux device-tree overlay for CoSim of DCMAC example design
+ *
+ * Copyright (c) 2026 Advanced Micro Devices, Inc.
+ * SPDX-License-Identifier: MIT
+ *
+ * This is based on Versal example design
+ *   https://github.com/Xilinx/Vivado-Design-Tutorials/tree/2023.2/Device_Architecture_Tutorials/Versal/NoC_System_Designs/DCMAC_NoC
+ * From which the xsct sdtgen work flow produced
+ *   ./vivado_ref/pl.dtsi
+ * Which is the reference base for this.
+ *
+ * See ./vivado_ref/README.md for detail
+ *
+ * To build this as overlay:
+ *  dtc -@ -I dts -O dtb -o BOOT-versal-vpk120-dcmac_demo.dtbo BOOT-versal-vpk120-dcmac_demo.dtsi
+ *
+ * Note:
+ * - This device tree is only for CoSim on virtual VPK120 board, and
+ * - It is NOT suitable for booting Linux on the real VPK120 board
+ */
+
+/* Comment out next 2 lines if this file is to be included instead */
+/dts-v1/;
+/plugin/;
+
+&amba {
+	/* As defined in prebuilt cortexa72-linux.dtb under /axi */
+	#address-cells = <0x02>;
+	#size-cells = <0x02>;
+
+	dcmac_clk_0: dcmac_clk_0 {
+		compatible = "fixed-clock";
+		clock-frequency = <390625000>;
+		#clock-cells = <0>;
+	};
+	dcmac_clk_1: dcmac_clk_1 {
+		compatible = "fixed-clock";
+		clock-frequency = <781250000>;
+		#clock-cells = <0>;
+	};
+	dcmac_clk_2: dcmac_clk_2 {
+		compatible = "fixed-clock";
+		clock-frequency = <100000000>;
+		#clock-cells = <0>;
+	};
+
+	dcmac_0: dcmac_0@a4000000 {
+		/*
+		 * https://github.com/Xilinx/linux-xlnx/blob/xilinx-v2025.2/Documentation/devicetree/bindings/net/xlnx%2Caxi-ethernet.yaml
+		 * (any propertty not specified is found to be not applicable to DCMAC + AXIDMA)
+		 * (a number of them are applicable only when driver is configured for MCDMA)
+                 *
+                 * For simplicity, the AXI DMA is attached via the legacy property
+                 * 'axistream-connected' (instead of the newer 'dmas' property).
+                 * The price for this simplicity is the annoying kernel message:
+                 *   xilinx_axienet a4000000.dcmac_0: Ethernet core IRQ not defined
+                 * This message is just an annoying info and can be ignored.
+		 */
+		compatible = "xlnx,dcmac-2.4";
+		reg = <0x0 0xa4000000 0x0 0x00100000>;
+		reg-names = "mac";
+		phy-mode = "400gbase-r"; /* https://github.com/Xilinx/linux-xlnx/commit/ef570b32b */
+		local-mac-address = [00 0a 35 00 00 00];
+		max-speed = <400000>;
+		axistream-connected = <&dcmac_dma_0>;
+		clock-names = "s_axi_aclk",
+			"rx_axi_clk",  "rx_core_clk", "rx_flexif_clk", "rx_macif_clk",
+			"ts_clk",      "tx_axi_clk",  "tx_core_clk",   "tx_flexif_clk", "tx_macif_clk";
+		clocks = <&versal_clk 65>,
+			<&dcmac_clk_0>, <&dcmac_clk_1>, <&dcmac_clk_2>,   <&dcmac_clk_2>,
+			<&dcmac_clk_2>, <&dcmac_clk_0>, <&dcmac_clk_1>,   <&dcmac_clk_2>,   <&dcmac_clk_2>;
+		/*
+		 * DCMAC wrapper instantiates the GPIO pins to interact with GTM QUADs
+		 * (see ./vivado-ref/bd_01-dcmac_0_cips.pdf)
+		 */
+		gt-ctrl-gpios =
+			<&axi_gpio_gt_ctl  0 0>, <&axi_gpio_gt_ctl  1 0>,
+			<&axi_gpio_gt_ctl  2 0>, <&axi_gpio_gt_ctl  3 0>,
+			<&axi_gpio_gt_ctl  4 0>, <&axi_gpio_gt_ctl  5 0>,
+			<&axi_gpio_gt_ctl  6 0>, <&axi_gpio_gt_ctl  7 0>,
+			<&axi_gpio_gt_ctl  8 0>, <&axi_gpio_gt_ctl  9 0>,
+			<&axi_gpio_gt_ctl 10 0>, <&axi_gpio_gt_ctl 11 0>,
+			<&axi_gpio_gt_ctl 12 0>, <&axi_gpio_gt_ctl 13 0>,
+			<&axi_gpio_gt_ctl 14 0>, <&axi_gpio_gt_ctl 15 0>,
+			<&axi_gpio_gt_ctl 16 0>, <&axi_gpio_gt_ctl 17 0>,
+			<&axi_gpio_gt_ctl 18 0>, <&axi_gpio_gt_ctl 19 0>,
+			<&axi_gpio_gt_ctl 20 0>, <&axi_gpio_gt_ctl 21 0>,
+			<&axi_gpio_gt_ctl 22 0>, <&axi_gpio_gt_ctl 23 0>,
+			<&axi_gpio_gt_ctl 24 0>, <&axi_gpio_gt_ctl 25 0>,
+			<&axi_gpio_gt_ctl 26 0>, <&axi_gpio_gt_ctl 27 0>,
+			<&axi_gpio_gt_ctl 28 0>, <&axi_gpio_gt_ctl 29 0>,
+			<&axi_gpio_gt_ctl 30 0>, <&axi_gpio_gt_ctl 31 0>;
+		gt-tx-dpath-gpios = /* => DCMAC.gt_reset_tx_datapath_in_<0-23> */
+			<&axi_gpio_tx_datapath  0 0>, <&axi_gpio_tx_datapath  1 0>,
+			<&axi_gpio_tx_datapath  2 0>, <&axi_gpio_tx_datapath  3 0>,
+			<&axi_gpio_tx_datapath  4 0>, <&axi_gpio_tx_datapath  5 0>,
+			<&axi_gpio_tx_datapath  6 0>, <&axi_gpio_tx_datapath  7 0>,
+			<&axi_gpio_tx_datapath  8 0>, <&axi_gpio_tx_datapath  9 0>,
+			<&axi_gpio_tx_datapath 10 0>, <&axi_gpio_tx_datapath 11 0>,
+			<&axi_gpio_tx_datapath 12 0>, <&axi_gpio_tx_datapath 13 0>,
+			<&axi_gpio_tx_datapath 14 0>, <&axi_gpio_tx_datapath 15 0>,
+			<&axi_gpio_tx_datapath 16 0>, <&axi_gpio_tx_datapath 17 0>,
+			<&axi_gpio_tx_datapath 18 0>, <&axi_gpio_tx_datapath 19 0>,
+			<&axi_gpio_tx_datapath 20 0>, <&axi_gpio_tx_datapath 21 0>,
+			<&axi_gpio_tx_datapath 22 0>, <&axi_gpio_tx_datapath 23 0>;
+		gt-tx-rst-done-gpios = /* <= DCMAC.gt_tx_reset_done_out_<0-23> */
+			<&axi_reset_done_dyn  0 0>, <&axi_reset_done_dyn  1 0>,
+			<&axi_reset_done_dyn  2 0>, <&axi_reset_done_dyn  3 0>,
+			<&axi_reset_done_dyn  4 0>, <&axi_reset_done_dyn  5 0>,
+			<&axi_reset_done_dyn  6 0>, <&axi_reset_done_dyn  7 0>,
+			<&axi_reset_done_dyn  8 0>, <&axi_reset_done_dyn  9 0>,
+			<&axi_reset_done_dyn 10 0>, <&axi_reset_done_dyn 11 0>,
+			<&axi_reset_done_dyn 12 0>, <&axi_reset_done_dyn 13 0>,
+			<&axi_reset_done_dyn 14 0>, <&axi_reset_done_dyn 15 0>,
+			<&axi_reset_done_dyn 16 0>, <&axi_reset_done_dyn 17 0>,
+			<&axi_reset_done_dyn 18 0>, <&axi_reset_done_dyn 19 0>,
+			<&axi_reset_done_dyn 20 0>, <&axi_reset_done_dyn 21 0>,
+			<&axi_reset_done_dyn 22 0>, <&axi_reset_done_dyn 23 0>;
+		gt-rx-dpath-gpios = /* => Drive DCMAC.gt_reset_rx_datapath_in_<0-23> */
+			<&axi_gpio_rx_datapath  0 0>, <&axi_gpio_rx_datapath  1 0>,
+			<&axi_gpio_rx_datapath  2 0>, <&axi_gpio_rx_datapath  3 0>,
+			<&axi_gpio_rx_datapath  4 0>, <&axi_gpio_rx_datapath  5 0>,
+			<&axi_gpio_rx_datapath  6 0>, <&axi_gpio_rx_datapath  7 0>,
+			<&axi_gpio_rx_datapath  8 0>, <&axi_gpio_rx_datapath  9 0>,
+			<&axi_gpio_rx_datapath 10 0>, <&axi_gpio_rx_datapath 11 0>,
+			<&axi_gpio_rx_datapath 12 0>, <&axi_gpio_rx_datapath 13 0>,
+			<&axi_gpio_rx_datapath 14 0>, <&axi_gpio_rx_datapath 15 0>,
+			<&axi_gpio_rx_datapath 16 0>, <&axi_gpio_rx_datapath 17 0>,
+			<&axi_gpio_rx_datapath 18 0>, <&axi_gpio_rx_datapath 19 0>,
+			<&axi_gpio_rx_datapath 20 0>, <&axi_gpio_rx_datapath 21 0>,
+			<&axi_gpio_rx_datapath 22 0>, <&axi_gpio_rx_datapath 23 0>;
+		gt-rx-rst-done-gpios = /* <= DCMAC.gt_rx_reset_done_out_<0-23> */
+			<&axi_reset_done_dyn 24 0>, <&axi_reset_done_dyn 25 0>,
+			<&axi_reset_done_dyn 26 0>, <&axi_reset_done_dyn 27 0>,
+			<&axi_reset_done_dyn 28 0>, <&axi_reset_done_dyn 29 0>,
+			<&axi_reset_done_dyn 30 0>, <&axi_reset_done_dyn 31 0>,
+			<&axi_reset_done_dyn 32 0>, <&axi_reset_done_dyn 33 0>,
+			<&axi_reset_done_dyn 34 0>, <&axi_reset_done_dyn 35 0>,
+			<&axi_reset_done_dyn 36 0>, <&axi_reset_done_dyn 37 0>,
+			<&axi_reset_done_dyn 38 0>, <&axi_reset_done_dyn 39 0>,
+			<&axi_reset_done_dyn 40 0>, <&axi_reset_done_dyn 41 0>,
+			<&axi_reset_done_dyn 42 0>, <&axi_reset_done_dyn 43 0>,
+			<&axi_reset_done_dyn 44 0>, <&axi_reset_done_dyn 45 0>,
+			<&axi_reset_done_dyn 46 0>, <&axi_reset_done_dyn 47 0>;
+		gt-rsts-gpios = /* => Tx and Rx Serdes reset */
+			<&axi_resets_dyn  0 0>, <&axi_resets_dyn  1 0>,
+			<&axi_resets_dyn  2 0>, <&axi_resets_dyn  3 0>,
+			<&axi_resets_dyn  4 0>, <&axi_resets_dyn  5 0>,
+			<&axi_resets_dyn  6 0>, <&axi_resets_dyn  7 0>,
+			<&axi_resets_dyn  8 0>, <&axi_resets_dyn  9 0>,
+			<&axi_resets_dyn 10 0>, <&axi_resets_dyn 11 0>,
+			<&axi_resets_dyn 12 0>, <&axi_resets_dyn 13 0>;
+
+		fixed-link { /* No speed negotiation */
+			speed = <400000>;
+			full-duplex;
+		};
+	};
+
+	dcmac_dma_0: axi_dma@a4180000 {
+		/*
+		 * Using AXIDMA falls into the "legacy DMA" flow:
+		 *  https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842485/Linux+AXI+Ethernet+driver
+		 */
+		compatible = "xlnx,eth-dma";
+		/*
+		 * https://github.com/Xilinx/linux-xlnx/blob/xilinx-v2025.2/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+		 *   xlnx,addrwidth > 32: AXIDMA _MSB registers and desc fields must be set.
+		 *   xlnx,sg-length-width: number of implemented bits in desc.control.length
+		 *   xlnx,include-dre: data-realignment-engine (unaligned dma) implemented
+		 *   xlnx,irq-delay: must be given as uint8_t, i.e., hex in square bracket
+		 *
+		 * Irqs 84 and 85 are PL Irqs and match those used by the MRMAC CoSim demo
+                 *
+                 * As of 2025.2, the xilinx_axienet driver limits the xlnx,sg-length-width
+                 * value to 23 bits by hardcoding XAXIDMA_BD_CTRL_LENGTH_MASK to 0x7FFFFF.
+                 *
+                 * The AXI-DMA model for this CoSim implements all 26 bits, but follow the
+                 * driver limit to avoid any potential issues.
+		 */
+		reg = <0x0 0xa4180000 0x0 0x00010000>;
+		reg-names = "dma";
+		interrupt-parent = <&gic>;
+		interrupt-names = "mm2s_introut", "s2mm_introut";
+		interrupts = <0 84 4 0 85 4>;
+		clock-names = "s_axi_aclk";
+		clocks = <&versal_clk 65>;
+		xlnx,axistream-connected;
+		xlnx,include-sg;
+		xlnx,include-dre;
+		xlnx,sg-length-width = <23>;
+		xlnx,addrwidth = <64>;
+		xlnx,irq-delay = [14];
+	};
+
+	/*
+	 * https://docs.amd.com/r/en-US/pg144-axi-gpio/Product-Specification
+	 * https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841846/AXI+GPIO
+	 * https://github.com/Xilinx/linux-xlnx/blob/xilinx-v2025.2/Documentation/devicetree/bindings/gpio/xlnx%2Cgpio-xilinx.yaml
+	 *
+	 * Since 2023.2, the driver only expects:
+	 *   xlnx,is-dual
+	 *   xlnx,dout-default*
+	 *   xlnx,tri-default*
+	 *   xlnx,gpio*-width
+	 *
+	 * Even if is-dual is false, xlnx,*-default-2 properties must still exist
+	 * to avoid uninitialized variables in drivers/gpio/gpio-xilinx.c
+         *
+         * When xlnx,is-dual=<1>, the channel index for gpio2.DATA.Bit_N is
+         * 'gpio-width + N', e.g., if gpio-width=<24>, <&dual_gpio 24> is
+         * refers to gpio2.DATA.Bit_0
+	 */
+	axi_gpio_gt_ctl: axi_gpio@a4130000 {
+		xlnx,name = "axi_gpio_gt_ctl";
+		compatible = "xlnx,axi-gpio-2.0" , "xlnx,xps-gpio-1.00.a";
+		reg = <0x0 0xa4130000 0x0 0x10000>;
+		#gpio-cells = <0x2>;
+		gpio-controller;
+		clock-names = "s_axi_aclk";
+		clocks = <&versal_clk 65>;
+		/*
+		 * - 32 channels, all in output mode, no interrupt
+		 * - *CURSOR are TX serdes emphasis tuning 8-bit values
+		 *     0 : gt-ctrl.DCMAC_GT_RESET_ALL; '1' to launch TX+RX reset
+		 *         state machines implemented by DCMAC wrapper
+		 *         '1' is reset state
+		 *  8..1 : gt_line_rate[7:0] = 0 (no #define)
+		 * 11..9 : gt_loopback[2:0]  = 0 (no #define)
+		 * 17..12: gt-ctrl.DCMAC_GT_TX_PRECURSOR[5:0]  = 0x04 = ((1<<12)|(1<<13)) >> 12
+		 * 23..18: gt-ctrl.DCMAC_GT_TX_POSTCURSOR[5:0] = 0x09 = ((1<<18)|(1<<21)) >> 18
+		 * 30..24: gt-ctrl.DCMAC_GT_MAINCURSOR[6:0]    = 0x4b = ((1<<24)|(1<<25)|(1<<27)|(1<<30)) >> 24
+		 * 31..31: gt_rxcdrhold[0:0] = 0 (no #define)
+		 * https://github.com/Xilinx/linux-xlnx/blob/xilinx-v2025.2/drivers/net/ethernet/xilinx/xilinx_axienet_main.c#L5461
+		 * https://github.com/Xilinx/linux-xlnx/blob/xilinx-v2025.2/drivers/net/ethernet/xilinx/xilinx_axienet_main.c#L800
+		 * https://github.com/Xilinx/linux-xlnx/blob/xilinx-v2025.2/drivers/net/ethernet/xilinx/xilinx_axienet.h#L797
+		 */
+		xlnx,is-dual = <0>;
+		xlnx,gpio-width = <32>;
+		xlnx,tri-default = <0x00000000>;
+		xlnx,dout-default = <0x00000000>;
+		xlnx,tri-default-2 = <0xFFFFFFFF>;
+		xlnx,dout-default-2 = <0x00000000>;
+		xlnx,interrupt-present = <0>;
+	};
+ 	axi_gpio_tx_datapath: axi_gpio@a4140000 {
+		xlnx,name = "axi_gpio_tx_datapath";
+		compatible = "xlnx,axi-gpio-2.0" , "xlnx,xps-gpio-1.00.a";
+		reg = <0x0 0xa4140000 0x0 0x10000>;
+		#gpio-cells = <0x2>;
+		gpio-controller;
+		clock-names = "s_axi_aclk";
+		clocks = <&versal_clk 65>;
+		/*
+		 * - 24 channels, all output and init to low, no interrupt
+		 * 23..0: gt_tx_dpath (no #define)
+		 * 31..24: unused
+		 */
+		xlnx,is-dual = <0>;
+		xlnx,gpio-width = <32>;
+		xlnx,tri-default = <0x00000000>;
+		xlnx,dout-default = <0x00000000>;
+		xlnx,tri-default-2 = <0xFFFFFFFF>;
+		xlnx,dout-default-2 = <0x00000000>;
+		xlnx,interrupt-present = <0>;
+	};
+	axi_gpio_rx_datapath: axi_gpio@a4150000 {
+		xlnx,name = "axi_gpio_rx_datapath";
+		compatible = "xlnx,xps-gpio-1.00.a";
+		reg = <0x0 0xa4150000 0x0 0x10000>;
+		#gpio-cells = <0x2>;
+		gpio-controller;
+		clock-names = "s_axi_aclk";
+		clocks = <&versal_clk 65>;
+		/*
+		 * - 24 channels, all output and init to low, no interrupt
+		 * 23..0: gt_rx_dpath.DCMAC_GT_RXDPATH_RST
+		 * 31..24: unused
+		 */
+		xlnx,is-dual = <0>;
+		xlnx,gpio-width = <32>;
+		xlnx,tri-default = <0x00000000>;
+		xlnx,dout-default = <0x00000000>;
+		xlnx,tri-default-2 = <0xFFFFFFFF>;
+		xlnx,dout-default-2 = <0x00000000>;
+		xlnx,interrupt-present = <0>;
+	};
+	axi_reset_done_dyn: axi_gpio@a4160000 {
+		xlnx,name = "axi_reset_done_dyn";
+		compatible = "xlnx,xps-gpio-1.00.a";
+		reg = <0x0 0xa4160000 0x0 0x10000>;
+		#gpio-cells = <0x2>;
+		gpio-controller;
+		clock-names = "s_axi_aclk";
+		clocks = <&versal_clk 65>;
+		/*
+		 * - 48 channels, all input, no interrupt
+		 * 23..0 : gt_tx_reset_done[23:0]
+		 * 55..32: gt_rx_reset_done[23:0]
+		 */
+		xlnx,is-dual = <1>;
+		xlnx,gpio-width = <24>;
+		xlnx,gpio2-width = <24>;
+		xlnx,tri-default = <0xFFFFFFFF>;
+		xlnx,dout-default = <0x00000000>;
+		xlnx,tri-default-2 = <0xFFFFFFFF>;
+		xlnx,dout-default-2 = <0x00000000>;
+		xlnx,interrupt-present = <0>;
+	};
+	axi_resets_dyn: axi_gpio@a4170000 {
+		xlnx,name = "axi_resets_dyn";
+		compatible = "xlnx,xps-gpio-1.00.a";
+		reg = <0x0 0xa4170000 0x0 0x10000>;
+		#gpio-cells = <0x2>;
+		gpio-controller;
+		clock-names = "s_axi_aclk";
+		clocks = <&versal_clk 65>;
+		/*
+		 * - 14 channels, all output and init to low, no interrupt
+		 *     0: tx_core_reset[0:0]
+		 *     1: rx_core_reset[0:0]
+		 *  7..2: tx_serdes_reset[5:0]
+		 * 13..8: rx_serdes_reset[5:0]
+		 */
+		xlnx,is-dual = <0>;
+		xlnx,gpio-width = <14>;
+		xlnx,tri-default = <0x00000000>;
+		xlnx,dout-default = <0x00000000>;
+		xlnx,tri-default-2 = <0xFFFFFFFF>;
+		xlnx,dout-default-2 = <0x00000000>;
+	};
+};
